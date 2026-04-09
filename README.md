@@ -19,6 +19,7 @@ Static website + small Node/Express server.
 git clone https://github.com/KorraOne/BunburyHireandSale.git
 cd BunburyHireandSale
 npm install
+npm install dotenv
 ```
 
 3. Create `.env`:

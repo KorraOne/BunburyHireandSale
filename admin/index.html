@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/admin/admin.css" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <div class="admin-container admin-header-inner">
+        <h1>Admin Dashboard</h1>
+        <button class="btn" type="button" id="createBtn">Create New Item</button>
+      </div>
+    </header>
+
+    <main class="admin-container admin-main">
+      <div class="card">
+        <table class="admin-table" aria-label="Items table">
+          <thead>
+            <tr>
+              <th>Thumbnail</th>
+              <th>Name</th>
+              <th>Tags</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="itemsTbody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState" hidden>No items yet.</div>
+      </div>
+    </main>
+
+    <div class="modal-backdrop" id="formBackdrop" hidden></div>
+    <section class="modal" id="formModal" role="dialog" aria-modal="true" aria-labelledby="formTitle" hidden>
+      <div class="modal-inner">
+        <div class="modal-header">
+          <h2 id="formTitle">Create Item</h2>
+          <button class="btn btn-secondary" type="button" id="cancelBtn">Cancel</button>
+        </div>
+
+        <form id="itemForm" class="form">
+          <input type="hidden" name="id" id="itemId" />
+
+          <label class="field">
+            <span class="label">Name</span>
+            <input class="input" type="text" name="name" id="nameInput" required />
+          </label>
+
+          <label class="field">
+            <span class="label">Description</span>
+            <textarea class="textarea" name="description" id="descInput" rows="4" required></textarea>
+          </label>
+
+          <fieldset class="field">
+            <legend class="label">Tags</legend>
+            <div class="checkbox-row">
+              <label class="checkbox">
+                <input type="checkbox" name="tags" value="hire" id="tagHire" />
+                <span>hire</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" name="tags" value="sale" id="tagSale" />
+                <span>sale</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <label class="field">
+            <span class="label">Image</span>
+            <input class="input" type="file" name="image" id="imageInput" accept="image/*" />
+            <span class="help" id="imageHelp">Required for create. Optional for edit (leave empty to keep current).</span>
+          </label>
+
+          <div class="preview-row" id="previewRow" hidden>
+            <img class="preview-img" id="imagePreview" alt="Selected image preview" />
+          </div>
+
+          <div class="form-actions">
+            <button class="btn" type="submit" id="saveBtn">Save</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <div class="modal-backdrop" id="deleteBackdrop" hidden></div>
+    <section
+      class="modal"
+      id="deleteModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="deleteTitle"
+      hidden
+    >
+      <div class="modal-inner">
+        <div class="modal-header">
+          <h2 id="deleteTitle">Confirm Delete</h2>
+          <button class="btn btn-secondary" type="button" id="deleteCancelBtn">Cancel</button>
+        </div>
+        <p class="modal-text">Delete this item and its image? This cannot be undone.</p>
+        <div class="form-actions">
+          <button class="btn btn-danger" type="button" id="deleteConfirmBtn">Delete</button>
+        </div>
+      </div>
+    </section>
+
+    <script src="/admin/admin.js"></script>
+  </body>
+</html>
+

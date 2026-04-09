@@ -1,0 +1,76 @@
+[
+  {
+    "id": "generator-01",
+    "name": "5kVA Generator",
+    "description": "Portable generator for worksites, events, and emergency backup.",
+    "image": "/public/images/products/no_product_placeholder.webp",
+    "tags": [
+      "hire",
+      "sale"
+    ]
+  },
+  {
+    "id": "trailer-01",
+    "name": "8x5 Cage Trailer",
+    "description": "Heavy-duty cage trailer suitable for moving equipment, rubbish, and materials.",
+    "image": "/public/images/products/no_product_placeholder.webp",
+    "tags": [
+      "hire"
+    ]
+  },
+  {
+    "id": "forklift-01",
+    "name": "2.5T Forklift",
+    "description": "Industrial forklift ideal for warehouses, yards, and construction sites.",
+    "image": "/public/images/products/no_product_placeholder.webp",
+    "tags": [
+      "hire"
+    ]
+  },
+  {
+    "id": "excavator-01",
+    "name": "1.7T Mini Excavator",
+    "description": "Compact excavator perfect for tight access digging and trenching.",
+    "image": "/public/images/products/no_product_placeholder.webp",
+    "tags": [
+      "hire",
+      "sale"
+    ]
+  },
+  {
+    "id": "auger-01",
+    "name": "Post Hole Auger",
+    "description": "Petrol-powered auger for fencing, landscaping, and soil drilling.",
+    "image": "/public/images/products/no_product_placeholder.webp",
+    "tags": [
+      "hire"
+    ]
+  },
+  {
+    "id": "pressurewasher-01",
+    "name": "High Pressure Washer",
+    "description": "Commercial-grade washer for cleaning vehicles, machinery, and surfaces.",
+    "image": "/public/images/products/no_product_placeholder.webp",
+    "tags": [
+      "hire"
+    ]
+  },
+  {
+    "id": "tractor-01",
+    "name": "40HP Tractor",
+    "description": "Versatile compact tractor suitable for farming, landscaping, and property work.",
+    "image": "/public/images/products/no_product_placeholder.webp",
+    "tags": [
+      "hire"
+    ]
+  },
+  {
+    "id": "scaffold-01",
+    "name": "Mobile Scaffold Tower",
+    "description": "Lightweight aluminium scaffold tower for indoor and outdoor access.",
+    "image": "/public/images/products/no_product_placeholder.webp",
+    "tags": [
+      "hire"
+    ]
+  }
+]

@@ -16,7 +16,7 @@ Static website + small Node/Express server.
 2. Clone your repo and install deps:
 
 ```bash
-git clone <url>
+git clone https://github.com/KorraOne/BunburyHireandSale.git
 cd webpage
 npm install
 ```

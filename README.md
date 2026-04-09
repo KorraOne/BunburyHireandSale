@@ -17,7 +17,7 @@ Static website + small Node/Express server.
 
 ```bash
 git clone https://github.com/KorraOne/BunburyHireandSale.git
-cd webpage
+cd BunburyHireandSale
 npm install
 ```
 

@@ -1,10 +1,10 @@
-# Bunbury Hire & Sale
+# Bunbury Hire & Sales
 
 Static website + small Node/Express server.
 
 ## What’s in here
 
-- Public site pages: `index.html`, `hire.html`, `sale.html`, `about.html`, `contact.html`
+- Public site pages: `index.html`, `hire.html`, `sales.html`, `about.html`, `contact.html`
 - Public assets: `public/`
 - Data source: `data/items.json`
 - Admin UI: `admin/` (protected by HTTP Basic Auth)

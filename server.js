@@ -53,6 +53,16 @@ function normalizeTags(tags) {
   return unique;
 }
 
+function parseImageFocus(body) {
+  const x = Number(body?.cropX);
+  const y = Number(body?.cropY);
+  const focus = {
+    x: Number.isFinite(x) ? Math.max(0, Math.min(100, x)) : 50,
+    y: Number.isFinite(y) ? Math.max(0, Math.min(100, y)) : 50,
+  };
+  return focus;
+}
+
 function resolveProductFileFromImagePath(imagePath) {
   if (typeof imagePath !== "string") return null;
   const rel = imagePath.replace(/^\/+/, "");
@@ -144,7 +154,8 @@ app.get("/admin/api/items", (req, res) => {
     if (!it || typeof it !== "object") return it;
     const nextImage = resolveValidImagePath(it.image);
     if (it.image !== nextImage) changed = true;
-    return { ...it, image: nextImage };
+    const focus = it.imageFocus && typeof it.imageFocus === "object" ? it.imageFocus : undefined;
+    return { ...it, image: nextImage, ...(focus ? { imageFocus: focus } : {}) };
   });
 
   if (changed) writeItems(normalized);
@@ -194,6 +205,7 @@ app.post(
       description,
       image: resolveValidImagePath(imagePath),
       tags,
+      imageFocus: parseImageFocus(req.body),
     };
 
     items.push(item);
@@ -244,6 +256,7 @@ app.put("/admin/api/items/:id", upload.single("image"), (req, res) => {
     description,
     tags,
     image: newImagePath,
+    imageFocus: parseImageFocus(req.body),
   };
 
   items[idx] = updated;

@@ -36,10 +36,31 @@ body {
   background: var(--white);
 }
 
+/* Accessibility */
+.skip-link {
+  position: absolute;
+  top: var(--space-8);
+  left: var(--space-8);
+  z-index: 1000;
+  padding: var(--space-8) var(--space-16);
+  border-radius: 4px;
+  background: var(--primary-blue);
+  color: var(--white);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 4px solid var(--dark-navy);
+  outline-offset: 4px;
+}
+
 /* Home (index) page: lock to viewport, no scrolling */
 .page-home {
   height: 100vh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -167,7 +188,7 @@ button {
 }
 
 .brand-item {
-  background: var(--white);
+  background: #93959B;
   border: 1px solid #ddd;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);

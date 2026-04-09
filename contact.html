@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contact — Bunbury Hire &amp; Sale</title>
+    <title>Contact — Bunbury Hire &amp; Sales</title>
     <meta
       name="description"
       content="Reach out for hire availability, sales enquiries, or general questions."
@@ -11,12 +11,13 @@
     <link rel="stylesheet" href="/public/css/styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="nav">
-        <a class="nav-logo" href="/index.html" aria-label="Bunbury Hire &amp; Sale — Home">
+        <a class="nav-logo" href="/index.html" aria-label="Bunbury Hire &amp; Sales — Home">
           <img
             src="/public/images/logos/logo_wide_transparent.svg"
-            alt="Bunbury Hire & Sale"
+            alt="Bunbury Hire & Sales"
             width="240"
             height="48"
           />
@@ -25,7 +26,7 @@
         <nav class="nav-links" aria-label="Primary navigation">
           <a class="nav-link" href="/index.html">Home</a>
           <a class="nav-link" href="/hire.html">Hire</a>
-          <a class="nav-link" href="/sale.html">Sale</a>
+          <a class="nav-link" href="/sales.html">Sales</a>
           <a class="nav-link" href="/about.html">About</a>
           <a class="nav-link is-active" href="/contact.html">Contact</a>
         </nav>
@@ -43,12 +44,18 @@
     </header>
 
     <div class="drawer-backdrop" data-drawer-backdrop hidden></div>
-    <aside id="mobile-drawer" class="mobile-drawer" aria-label="Mobile navigation" hidden>
+    <aside
+      id="mobile-drawer"
+      class="mobile-drawer"
+      aria-label="Mobile navigation"
+      aria-hidden="true"
+      hidden
+    >
       <div class="mobile-drawer-header">
         <img
           class="mobile-drawer-logo"
           src="/public/images/logos/logo_wide_transparent.svg"
-          alt="Bunbury Hire & Sale"
+          alt="Bunbury Hire & Sales"
           width="220"
           height="44"
         />
@@ -56,13 +63,13 @@
       <nav class="mobile-drawer-links">
         <a class="mobile-drawer-link" href="/index.html">Home</a>
         <a class="mobile-drawer-link" href="/hire.html">Hire</a>
-        <a class="mobile-drawer-link" href="/sale.html">Sale</a>
+        <a class="mobile-drawer-link" href="/sales.html">Sales</a>
         <a class="mobile-drawer-link" href="/about.html">About</a>
         <a class="mobile-drawer-link is-active" href="/contact.html">Contact</a>
       </nav>
     </aside>
 
-    <main>
+    <main id="main">
       <section class="hire-header">
         <div class="container">
           <h1>Contact</h1>
@@ -89,8 +96,15 @@
               <div class="contact-group">
                 <div class="contact-label">Address</div>
                 <div class="contact-value">
-                  5 Shanahan Rd<br />
-                  Davenport WA 6230
+                  <a
+                    class="text-link"
+                    href="https://maps.app.goo.gl/W1KAJAKqfVk7APCLA"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    5 Shanahan Rd<br />
+                    Davenport WA 6230
+                  </a>
                 </div>
               </div>
 
@@ -109,7 +123,7 @@
               <div class="map-embed">
                 <iframe
                   title="Bunbury Hire & Sale location"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7511.089823571268!2d115.66916997408224!3d-33.36302193625572!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2a31e272fe13ffb9%3A0x431c019f971c9ae2!2s5%20Shanahan%20Rd!5e0!3m2!1sen!2sau!4v1773840253383!5m2!1sen!2sau"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3332.252415447614!2d115.6716897!3d-33.3644756!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2a31e39a66e8fa4f%3A0x7c479ad1f7c6791e!2sBunbury%20Hire%20and%20Sales!5e0!3m2!1sen!2sau!4v1775743168302!5m2!1sen!2sau"
                   width="100%"
                   height="320"
                   style="border: 0"
@@ -125,7 +139,7 @@
     </main>
 
     <footer class="site-footer">
-      <div class="footer-inner">© Bunbury Hire &amp; Sale</div>
+      <div class="footer-inner">© Bunbury Hire &amp; Sales</div>
     </footer>
 
     <script src="/public/js/main.js"></script>

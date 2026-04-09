@@ -14,6 +14,7 @@
     if (isOpen) {
       drawer.hidden = false;
       backdrop.hidden = false;
+      drawer.setAttribute("aria-hidden", "false");
       requestAnimationFrame(() => drawer.classList.add("is-open"));
 
       const firstFocusable = drawer.querySelector(focusableSelector);
@@ -25,6 +26,7 @@
     backdrop.hidden = true;
     window.setTimeout(() => {
       drawer.hidden = true;
+      drawer.setAttribute("aria-hidden", "true");
     }, 200);
 
     openButton.focus();
@@ -109,6 +111,13 @@
         img.src = imageOrPlaceholder(item.image);
         img.alt = item.name;
         img.loading = "lazy";
+        if (item && item.imageFocus && typeof item.imageFocus === "object") {
+          const x = Number(item.imageFocus.x);
+          const y = Number(item.imageFocus.y);
+          if (Number.isFinite(x) && Number.isFinite(y)) {
+            img.style.objectPosition = `${x}% ${y}%`;
+          }
+        }
 
         const title = document.createElement("div");
         title.className = "hire-card-title";
@@ -127,7 +136,7 @@
 })();
 
 (() => {
-  const grid = document.querySelector("[data-sale-grid]");
+  const grid = document.querySelector("[data-sales-grid]");
   if (!grid) return;
 
   const normalizeTags = (tags) => (Array.isArray(tags) ? tags.filter((t) => typeof t === "string") : []);
@@ -137,7 +146,7 @@
       : "/public/images/products/no_product_placeholder.webp";
 
   const renderEmpty = () => {
-    grid.textContent = "No sale items available at the moment.";
+    grid.textContent = "No items for sale available at the moment.";
   };
 
   fetch("/data/items.json")
@@ -169,6 +178,13 @@
         img.src = imageOrPlaceholder(item.image);
         img.alt = item.name;
         img.loading = "lazy";
+        if (item && item.imageFocus && typeof item.imageFocus === "object") {
+          const x = Number(item.imageFocus.x);
+          const y = Number(item.imageFocus.y);
+          if (Number.isFinite(x) && Number.isFinite(y)) {
+            img.style.objectPosition = `${x}% ${y}%`;
+          }
+        }
 
         const title = document.createElement("div");
         title.className = "hire-card-title";

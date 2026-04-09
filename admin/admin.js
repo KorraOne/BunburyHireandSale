@@ -31,6 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
     previewRow: document.getElementById("previewRow"),
     previewImg: document.getElementById("imagePreview"),
     saveBtn: document.getElementById("saveBtn"),
+    cropX: document.getElementById("cropX"),
+    cropY: document.getElementById("cropY"),
+    cropField: document.getElementById("cropField"),
+    cropFrame: document.getElementById("cropFrame"),
+    cropImg: document.getElementById("cropImg"),
 
     deleteBackdrop: document.getElementById("deleteBackdrop"),
     deleteModal: document.getElementById("deleteModal"),
@@ -44,6 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let deleteId = null;
   let previewObjectUrl = null;
+  let cropObjectUrl = null;
+  let cropState = { x: 50, y: 50 };
 
   function clearPreview() {
     if (previewObjectUrl) {
@@ -52,6 +59,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     els.previewImg.src = "";
     els.previewRow.hidden = true;
+  }
+
+  function clearCropPreview() {
+    if (cropObjectUrl) {
+      URL.revokeObjectURL(cropObjectUrl);
+      cropObjectUrl = null;
+    }
+    if (els.cropImg) els.cropImg.src = "";
+    if (els.cropField) els.cropField.hidden = true;
+  }
+
+  function clamp(n, min, max) {
+    return Math.max(min, Math.min(max, n));
+  }
+
+  function setCrop(x, y) {
+    cropState = { x: clamp(Number(x) || 50, 0, 100), y: clamp(Number(y) || 50, 0, 100) };
+    if (els.cropX) els.cropX.value = String(cropState.x);
+    if (els.cropY) els.cropY.value = String(cropState.y);
+    if (els.cropImg) els.cropImg.style.objectPosition = `${cropState.x}% ${cropState.y}%`;
   }
 
   function setModalOpen(modal, backdrop, isOpen) {
@@ -64,6 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
     els.form.reset();
     els.itemId.value = "";
     clearPreview();
+    clearCropPreview();
+    setCrop(50, 50);
   }
 
   function openCreateForm() {
@@ -72,6 +101,8 @@ document.addEventListener("DOMContentLoaded", () => {
     els.image.required = false;
     els.imageHelp.textContent = "Optional for create (leave empty to use placeholder).";
     clearPreview();
+    clearCropPreview();
+    setCrop(50, 50);
     setModalOpen(els.formModal, els.formBackdrop, true);
     els.name.focus();
   }
@@ -92,6 +123,14 @@ document.addEventListener("DOMContentLoaded", () => {
     clearPreview();
     els.previewImg.src = withPlaceholder(item.image);
     els.previewRow.hidden = false;
+
+    clearCropPreview();
+    setCrop(item?.imageFocus?.x ?? 50, item?.imageFocus?.y ?? 50);
+    if (els.cropImg && els.cropField) {
+      els.cropImg.src = withPlaceholder(item.image);
+      els.cropField.hidden = false;
+      els.cropImg.style.objectPosition = `${cropState.x}% ${cropState.y}%`;
+    }
 
     setModalOpen(els.formModal, els.formBackdrop, true);
     els.name.focus();
@@ -224,10 +263,69 @@ document.addEventListener("DOMContentLoaded", () => {
     previewObjectUrl = URL.createObjectURL(file);
     els.previewImg.src = previewObjectUrl;
     els.previewRow.hidden = false;
+
+    clearCropPreview();
+    cropObjectUrl = URL.createObjectURL(file);
+    setCrop(50, 50);
+    if (els.cropImg && els.cropField) {
+      els.cropImg.src = cropObjectUrl;
+      els.cropField.hidden = false;
+      els.cropImg.style.objectPosition = `${cropState.x}% ${cropState.y}%`;
+    }
   });
+
+  if (els.cropFrame && els.cropImg) {
+    let dragging = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    const onMove = (clientX, clientY) => {
+      const rect = els.cropFrame.getBoundingClientRect();
+      const dx = clientX - lastX;
+      const dy = clientY - lastY;
+      lastX = clientX;
+      lastY = clientY;
+
+      // Drag right -> move focus left (so content follows finger)
+      const nextX = cropState.x - (dx / rect.width) * 100;
+      const nextY = cropState.y - (dy / rect.height) * 100;
+      setCrop(nextX, nextY);
+    };
+
+    els.cropFrame.addEventListener("pointerdown", (e) => {
+      if (els.cropField.hidden) return;
+      dragging = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      els.cropFrame.setPointerCapture(e.pointerId);
+    });
+
+    els.cropFrame.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      onMove(e.clientX, e.clientY);
+    });
+
+    const endDrag = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      try {
+        els.cropFrame.releasePointerCapture(e.pointerId);
+      } catch {
+        // ignore
+      }
+    };
+
+    els.cropFrame.addEventListener("pointerup", endDrag);
+    els.cropFrame.addEventListener("pointercancel", endDrag);
+  }
 
   els.form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    if (!els.form.checkValidity()) {
+      els.form.reportValidity();
+      return;
+    }
 
     const id = els.itemId.value.trim();
     const formData = new FormData();
@@ -239,6 +337,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const file = els.image.files && els.image.files[0];
     if (file) formData.set("image", file);
+
+    // Persist focus point used for card cropping
+    formData.set("cropX", String(cropState.x));
+    formData.set("cropY", String(cropState.y));
 
     els.saveBtn.disabled = true;
     try {

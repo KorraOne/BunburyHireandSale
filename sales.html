@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Items for Sale — Bunbury Hire &amp; Sale</title>
+    <title>Items for Sale — Bunbury Hire &amp; Sales</title>
     <meta
       name="description"
       content="Industrial equipment for sale in Bunbury. Tools, trailers, forklifts, tractors, excavators and more."
@@ -11,12 +11,13 @@
     <link rel="stylesheet" href="/public/css/styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="nav">
-        <a class="nav-logo" href="/index.html" aria-label="Bunbury Hire &amp; Sale — Home">
+        <a class="nav-logo" href="/index.html" aria-label="Bunbury Hire &amp; Sales — Home">
           <img
             src="/public/images/logos/logo_wide_transparent.svg"
-            alt="Bunbury Hire & Sale"
+            alt="Bunbury Hire & Sales"
             width="240"
             height="48"
           />
@@ -25,7 +26,7 @@
         <nav class="nav-links" aria-label="Primary navigation">
           <a class="nav-link" href="/index.html">Home</a>
           <a class="nav-link" href="/hire.html">Hire</a>
-          <a class="nav-link is-active" href="/sale.html">Sale</a>
+          <a class="nav-link is-active" href="/sales.html">Sales</a>
           <a class="nav-link" href="/about.html">About</a>
           <a class="nav-link" href="/contact.html">Contact</a>
         </nav>
@@ -43,12 +44,18 @@
     </header>
 
     <div class="drawer-backdrop" data-drawer-backdrop hidden></div>
-    <aside id="mobile-drawer" class="mobile-drawer" aria-label="Mobile navigation" hidden>
+    <aside
+      id="mobile-drawer"
+      class="mobile-drawer"
+      aria-label="Mobile navigation"
+      aria-hidden="true"
+      hidden
+    >
       <div class="mobile-drawer-header">
         <img
           class="mobile-drawer-logo"
           src="/public/images/logos/logo_wide_transparent.svg"
-          alt="Bunbury Hire & Sale"
+          alt="Bunbury Hire & Sales"
           width="220"
           height="44"
         />
@@ -56,18 +63,18 @@
       <nav class="mobile-drawer-links">
         <a class="mobile-drawer-link" href="/index.html">Home</a>
         <a class="mobile-drawer-link" href="/hire.html">Hire</a>
-        <a class="mobile-drawer-link is-active" href="/sale.html">Sale</a>
+        <a class="mobile-drawer-link is-active" href="/sales.html">Sales</a>
         <a class="mobile-drawer-link" href="/about.html">About</a>
         <a class="mobile-drawer-link" href="/contact.html">Contact</a>
       </nav>
     </aside>
 
-    <main>
+    <main id="main">
       <section class="hire-header">
         <div class="container">
           <h1>Equipment for Sale</h1>
           <p>
-            Browse industrial equipment for sale from Bunbury Hire &amp; Sale, from small tools to heavy
+            Browse industrial equipment for sale from Bunbury Hire &amp; Sales, from small tools to heavy
             machinery. Find out more by <a class="text-link" href="/contact.html">contacting us</a>.
           </p>
         </div>
@@ -75,13 +82,13 @@
 
       <section class="hire-section">
         <div class="container">
-          <div class="hire-grid" data-sale-grid></div>
+          <div class="hire-grid" data-sales-grid></div>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div class="footer-inner">© Bunbury Hire &amp; Sale</div>
+      <div class="footer-inner">© Bunbury Hire &amp; Sales</div>
     </footer>
 
     <script src="/public/js/main.js"></script>

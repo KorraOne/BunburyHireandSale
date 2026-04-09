@@ -42,6 +42,8 @@
 
         <form id="itemForm" class="form">
           <input type="hidden" name="id" id="itemId" />
+          <input type="hidden" name="cropX" id="cropX" value="50" />
+          <input type="hidden" name="cropY" id="cropY" value="50" />
 
           <label class="field">
             <span class="label">Name</span>
@@ -75,6 +77,14 @@
 
           <div class="preview-row" id="previewRow" hidden>
             <img class="preview-img" id="imagePreview" alt="Selected image preview" />
+          </div>
+
+          <div class="field" id="cropField" hidden>
+            <span class="label">Crop preview</span>
+            <div class="help">Drag the image to choose the focus area used for card cropping.</div>
+            <div class="crop-frame" id="cropFrame" aria-label="Image crop preview">
+              <img class="crop-img" id="cropImg" alt="Crop preview" />
+            </div>
           </div>
 
           <div class="form-actions">

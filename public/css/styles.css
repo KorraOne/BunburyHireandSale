@@ -178,7 +178,7 @@ button {
 }
 
 .hire-card-flip.is-flipped .hire-card-inner {
-  transform: rotateY(180deg);
+  transform: rotateX(180deg);
 }
 
 .hire-card-face {
@@ -197,7 +197,7 @@ button {
   background: var(--light-blue-tint);
   position: absolute;
   inset: 0;
-  transform: rotateY(180deg);
+  transform: rotateX(180deg);
   padding: var(--space-16);
   gap: var(--space-8);
   overflow: auto;

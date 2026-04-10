@@ -21,6 +21,7 @@
             <tr>
               <th>Thumbnail</th>
               <th>Name</th>
+              <th>Status</th>
               <th>Tags</th>
               <th>Edit</th>
               <th>Delete</th>
@@ -51,8 +52,13 @@
           </label>
 
           <label class="field">
-            <span class="label">Description</span>
-            <textarea class="textarea" name="description" id="descInput" rows="4" required></textarea>
+            <span class="label">Description (optional)</span>
+            <textarea class="textarea" name="description" id="descInput" rows="4"></textarea>
+          </label>
+
+          <label class="field">
+            <span class="label">Alt text (optional)</span>
+            <input class="input" type="text" name="alt" id="altInput" />
           </label>
 
           <fieldset class="field">

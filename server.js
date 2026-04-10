@@ -5,6 +5,7 @@ const basicAuth = require("express-basic-auth");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 
 const app = express();
 
@@ -31,6 +32,10 @@ function writeItems(items) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(items, null, 2) + "\n", "utf8");
 }
 
+function isUuid(id) {
+  return typeof id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+}
+
 function slugify(input) {
   return String(input || "")
     .toLowerCase()
@@ -40,9 +45,8 @@ function slugify(input) {
 }
 
 function generateId(name) {
-  const base = slugify(name) || "item";
-  const suffix = Math.random().toString(36).slice(2, 8);
-  return `${base}-${suffix}`;
+  // New schema prefers UUIDs; keep helper name for minimal changes.
+  return crypto.randomUUID();
 }
 
 function normalizeTags(tags) {
@@ -51,6 +55,103 @@ function normalizeTags(tags) {
   const unique = Array.from(new Set(cleaned));
   unique.sort();
   return unique;
+}
+
+function normalizeOrder(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function normalizeIsoDate(value) {
+  if (typeof value !== "string") return null;
+  const d = new Date(value);
+  return Number.isFinite(d.getTime()) ? d.toISOString() : null;
+}
+
+function normalizeItem(rawItem, index, nowIso) {
+  if (!rawItem || typeof rawItem !== "object") return null;
+
+  const name = typeof rawItem.name === "string" ? rawItem.name.trim() : "";
+  if (name.length === 0) return null;
+
+  const id =
+    typeof rawItem.id === "string" && rawItem.id.trim().length > 0
+      ? rawItem.id.trim()
+      : crypto.randomUUID();
+
+  const description = typeof rawItem.description === "string" ? rawItem.description : "";
+  const image = typeof rawItem.image === "string" ? rawItem.image : "";
+  const alt = typeof rawItem.alt === "string" ? rawItem.alt : "";
+
+  // Preserve existing fields used by current public site/admin
+  const tags = normalizeTags(rawItem.tags);
+  const imageFocus = rawItem.imageFocus && typeof rawItem.imageFocus === "object" ? rawItem.imageFocus : undefined;
+
+  // Page-specific ordering: order.hire / order.sale
+  let orderObj = rawItem.order && typeof rawItem.order === "object" ? rawItem.order : null;
+  // Backward compat: old numeric order -> assign to the pages this item appears on
+  if (!orderObj) {
+    const numeric = normalizeOrder(rawItem.order);
+    if (numeric !== null) {
+      orderObj = {};
+      if (tags.includes("hire")) orderObj.hire = numeric;
+      if (tags.includes("sale")) orderObj.sale = numeric;
+    }
+  }
+  if (!orderObj) orderObj = {};
+  const orderHire = normalizeOrder(orderObj.hire);
+  const orderSale = normalizeOrder(orderObj.sale);
+  const dateAdded = normalizeIsoDate(rawItem.dateAdded) || nowIso;
+  const dateUpdated = normalizeIsoDate(rawItem.dateUpdated) || nowIso;
+
+  return {
+    ...rawItem,
+    id,
+    name,
+    description,
+    image,
+    alt,
+    order: {
+      ...(tags.includes("hire") ? { hire: orderHire } : {}),
+      ...(tags.includes("sale") ? { sale: orderSale } : {}),
+    },
+    dateAdded,
+    dateUpdated,
+    tags,
+    ...(imageFocus ? { imageFocus } : {}),
+  };
+}
+
+function normalizeItems(items) {
+  const nowIso = new Date().toISOString();
+  const normalized = [];
+  for (let i = 0; i < items.length; i += 1) {
+    const n = normalizeItem(items[i], i, nowIso);
+    if (n) normalized.push(n);
+  }
+
+  // Assign missing page-specific orders based on filtered index
+  const hireItems = normalized.filter((it) => Array.isArray(it.tags) && it.tags.includes("hire"));
+  const saleItems = normalized.filter((it) => Array.isArray(it.tags) && it.tags.includes("sale"));
+
+  hireItems.sort((a, b) => (Number(a.order?.hire) || 0) - (Number(b.order?.hire) || 0));
+  saleItems.sort((a, b) => (Number(a.order?.sale) || 0) - (Number(b.order?.sale) || 0));
+
+  let hireIndex = 0;
+  for (const it of hireItems) {
+    if (!it.order || typeof it.order !== "object") it.order = {};
+    if (!Number.isFinite(Number(it.order.hire))) it.order.hire = hireIndex;
+    hireIndex += 1;
+  }
+
+  let saleIndex = 0;
+  for (const it of saleItems) {
+    if (!it.order || typeof it.order !== "object") it.order = {};
+    if (!Number.isFinite(Number(it.order.sale))) it.order.sale = saleIndex;
+    saleIndex += 1;
+  }
+
+  return normalized;
 }
 
 function parseImageFocus(body) {
@@ -134,6 +235,9 @@ app.use("/admin", express.static(path.join(ROOT_DIR, "admin"), { index: "index.h
 app.use("/public", express.static(path.join(ROOT_DIR, "public")));
 app.use(express.static(ROOT_DIR));
 
+// JSON body for admin API helpers (e.g., reorder)
+app.use(express.json({ limit: "1mb" }));
+
 function makeStorage() {
   return multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, PRODUCTS_DIR),
@@ -148,7 +252,7 @@ function makeStorage() {
 const upload = multer({ storage: makeStorage() });
 
 app.get("/admin/api/items", (req, res) => {
-  const items = readItems();
+  const items = normalizeItems(readItems());
   let changed = false;
   const normalized = items.map((it) => {
     if (!it || typeof it !== "object") return it;
@@ -170,7 +274,7 @@ app.post(
   },
   upload.single("image"),
   (req, res) => {
-    const { name, description } = req.body || {};
+    const { name, description, alt } = req.body || {};
     const tags = normalizeTags(req.body?.tags);
 
     if (typeof name !== "string" || name.trim().length === 0) {
@@ -179,12 +283,7 @@ app.post(
       return;
     }
 
-    if (typeof description !== "string") {
-      if (req.file?.filename) safeUnlink(path.join(PRODUCTS_DIR, req.file.filename));
-      res.status(400).json({ error: "Description is required." });
-      return;
-    }
-
+    const nowIso = new Date().toISOString();
     const id = generateId(name);
 
     let imagePath = PLACEHOLDER_IMAGE;
@@ -198,12 +297,19 @@ app.post(
       imagePath = `/public/images/products/${finalFilename}`;
     }
 
-    const items = readItems();
+    const items = normalizeItems(readItems());
     const item = {
       id,
       name: name.trim(),
-      description,
+      description: typeof description === "string" ? description : "",
       image: resolveValidImagePath(imagePath),
+      alt: typeof alt === "string" ? alt : "",
+      order: {
+        ...(tags.includes("hire") ? { hire: items.filter((it) => it.tags.includes("hire")).length } : {}),
+        ...(tags.includes("sale") ? { sale: items.filter((it) => it.tags.includes("sale")).length } : {}),
+      },
+      dateAdded: nowIso,
+      dateUpdated: nowIso,
       tags,
       imageFocus: parseImageFocus(req.body),
     };
@@ -216,7 +322,7 @@ app.post(
 
 app.put("/admin/api/items/:id", upload.single("image"), (req, res) => {
   const id = req.params.id;
-  const items = readItems();
+  const items = normalizeItems(readItems());
   const idx = items.findIndex((it) => it && it.id === id);
   if (idx === -1) {
     if (req.file?.filename) safeUnlink(path.join(PRODUCTS_DIR, req.file.filename));
@@ -225,18 +331,12 @@ app.put("/admin/api/items/:id", upload.single("image"), (req, res) => {
   }
 
   const existing = items[idx];
-  const { name, description } = req.body || {};
+  const { name, description, alt } = req.body || {};
   const tags = normalizeTags(req.body?.tags);
 
   if (typeof name !== "string" || name.trim().length === 0) {
     if (req.file?.filename) safeUnlink(path.join(PRODUCTS_DIR, req.file.filename));
     res.status(400).json({ error: "Name is required." });
-    return;
-  }
-
-  if (typeof description !== "string") {
-    if (req.file?.filename) safeUnlink(path.join(PRODUCTS_DIR, req.file.filename));
-    res.status(400).json({ error: "Description is required." });
     return;
   }
 
@@ -253,15 +353,57 @@ app.put("/admin/api/items/:id", upload.single("image"), (req, res) => {
   const updated = {
     ...existing,
     name: name.trim(),
-    description,
+    description: typeof description === "string" ? description : "",
     tags,
     image: newImagePath,
+    alt: typeof alt === "string" ? alt : "",
     imageFocus: parseImageFocus(req.body),
+    dateUpdated: new Date().toISOString(),
   };
 
   items[idx] = updated;
   writeItems(items);
   res.json(updated);
+});
+
+app.post("/admin/api/items/reorderPage", (req, res) => {
+  const page = req.body?.page;
+  const list = req.body?.order;
+
+  if (page !== "hire" && page !== "sale") {
+    res.status(400).json({ success: false, error: "page must be 'hire' or 'sale'." });
+    return;
+  }
+
+  if (!Array.isArray(list)) {
+    res.status(400).json({ success: false, error: "order must be an array." });
+    return;
+  }
+
+  const items = normalizeItems(readItems());
+  const orderMap = new Map();
+  for (const entry of list) {
+    if (!entry || typeof entry !== "object") continue;
+    if (typeof entry.id !== "string") continue;
+    const n = Number(entry.order);
+    if (!Number.isFinite(n)) continue;
+    orderMap.set(entry.id, n);
+  }
+
+  const nowIso = new Date().toISOString();
+  let updatedCount = 0;
+  for (const item of items) {
+    if (!item || typeof item !== "object") continue;
+    if (!orderMap.has(item.id)) continue;
+    if (!Array.isArray(item.tags) || !item.tags.includes(page)) continue;
+    if (!item.order || typeof item.order !== "object") item.order = {};
+    item.order[page] = orderMap.get(item.id);
+    item.dateUpdated = nowIso;
+    updatedCount += 1;
+  }
+
+  writeItems(items);
+  res.json({ success: true, updated: updatedCount });
 });
 
 app.delete("/admin/api/items/:id", (req, res) => {

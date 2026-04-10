@@ -116,6 +116,48 @@ img {
   color: var(--neutral-grey);
 }
 
+.badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.badge-ok {
+  background: #e6f6ea;
+  border-color: #b9e4c3;
+  color: #1f6d36;
+}
+
+.badge-warn {
+  background: #fff5cc;
+  border-color: #ffe08a;
+  color: #7a5a00;
+}
+
+.badge-bad {
+  background: #fde2e1;
+  border-color: #f6b5b4;
+  color: #8b1b1b;
+}
+
+.order-controls {
+  display: inline-flex;
+  gap: 8px;
+}
+
+
 .btn {
   background: var(--primary-blue);
   color: var(--white);

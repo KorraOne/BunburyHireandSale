@@ -1,4 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
+  try {
+    // Marks this browser session as admin-authenticated (after /admin login),
+    // so public pages can enable reorder mode without probing protected routes.
+    localStorage.setItem("adminAuthed", "1");
+  } catch {
+    // ignore
+  }
+
   const PLACEHOLDER_IMAGE = "/public/images/products/no_product_placeholder.webp";
 
   function withPlaceholder(imagePath) {
@@ -24,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     itemId: document.getElementById("itemId"),
     name: document.getElementById("nameInput"),
     desc: document.getElementById("descInput"),
+    alt: document.getElementById("altInput"),
     tagHire: document.getElementById("tagHire"),
     tagSale: document.getElementById("tagSale"),
     image: document.getElementById("imageInput"),
@@ -112,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
     els.itemId.value = item.id;
     els.name.value = item.name || "";
     els.desc.value = item.description || "";
+    els.alt.value = item.alt || "";
     const tags = Array.isArray(item.tags) ? item.tags : [];
     els.tagHire.checked = tags.includes("hire");
     els.tagSale.checked = tags.includes("sale");
@@ -156,7 +166,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     els.empty.hidden = true;
 
-    for (const item of items) {
+    const sortKey = (it) => {
+      const h = Number(it?.order?.hire);
+      const s = Number(it?.order?.sale);
+      if (Number.isFinite(h) && Number.isFinite(s)) return Math.min(h, s);
+      if (Number.isFinite(h)) return h;
+      if (Number.isFinite(s)) return s;
+      return 0;
+    };
+
+    const sorted = [...items].sort((a, b) => sortKey(a) - sortKey(b));
+    for (const item of sorted) {
       const tr = document.createElement("tr");
 
       const tdThumb = document.createElement("td");
@@ -169,6 +189,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const tdName = document.createElement("td");
       tdName.textContent = item.name || "";
+
+      const tdStatus = document.createElement("td");
+      const badges = document.createElement("div");
+      badges.className = "badges";
+      const missing = [];
+      if (!item.description || String(item.description).trim().length === 0) missing.push({ kind: "warn", text: "No description" });
+      if (!item.image || String(item.image).trim().length === 0) missing.push({ kind: "bad", text: "No image" });
+      if (!item.alt || String(item.alt).trim().length === 0) missing.push({ kind: "warn", text: "No alt text" });
+      if (missing.length === 0) missing.push({ kind: "ok", text: "OK" });
+      for (const m of missing) {
+        const badge = document.createElement("span");
+        badge.className = `badge badge-${m.kind}`;
+        badge.textContent = m.text;
+        badges.appendChild(badge);
+      }
+      tdStatus.appendChild(badges);
 
       const tdTags = document.createElement("td");
       const tagsWrap = document.createElement("div");
@@ -200,6 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       tr.appendChild(tdThumb);
       tr.appendChild(tdName);
+      tr.appendChild(tdStatus);
       tr.appendChild(tdTags);
       tr.appendChild(tdEdit);
       tr.appendChild(tdDelete);
@@ -331,6 +368,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const formData = new FormData();
     formData.set("name", els.name.value);
     formData.set("description", els.desc.value);
+    formData.set("alt", els.alt.value);
 
     if (els.tagHire.checked) formData.append("tags", "hire");
     if (els.tagSale.checked) formData.append("tags", "sale");

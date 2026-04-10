@@ -3,7 +3,7 @@
     "id": "3-5t-car-trailer-4s75a0",
     "name": "Trailers",
     "description": "3.5T car trailer rated capacity 2.6T\r\nElectric brakes with EB2 brake controller fitted",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/3-5t-car-trailer-4s75a0.jpeg",
     "alt": "d",
     "order": {
       "hire": 0
@@ -22,7 +22,7 @@
     "id": "3t-plant-trailer-86gqox",
     "name": "3T Plant Trailer",
     "description": "3T Plant Trailer",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/3t-plant-trailer-86gqox.jpeg",
     "alt": "",
     "order": {
       "hire": 1
@@ -41,7 +41,7 @@
     "id": "furniture-trailer-5uoq84",
     "name": "Furniture Trailer",
     "description": "Furniture Trailer ",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/furniture-trailer-5uoq84.jpeg",
     "alt": "",
     "order": {
       "hire": 2
@@ -60,7 +60,7 @@
     "id": "7x4-cage-trailer-cm6jyc",
     "name": "7X4 Cage Trailer",
     "description": "7X4 Cage Trailer",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/7x4-cage-trailer-cm6jyc.jpeg",
     "alt": "",
     "order": {
       "hire": 3
@@ -79,7 +79,7 @@
     "id": "2t-plant-trailer-k57bbi",
     "name": "2T Plant Trailer",
     "description": "2T Plant Trailer",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/2t-plant-trailer-k57bbi.jpeg",
     "alt": "",
     "order": {
       "hire": 4
@@ -98,7 +98,7 @@
     "id": "inverter-generators-e5bphg",
     "name": "Inverter Generators",
     "description": "Generators",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/inverter-generators-e5bphg.jpeg",
     "alt": "",
     "order": {
       "sale": 0
@@ -117,7 +117,7 @@
     "id": "water-pumps-x1fd1e",
     "name": "Water Pumps",
     "description": "Water Pumps",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/water-pumps-x1fd1e.png",
     "alt": "",
     "order": {
       "sale": 1
@@ -136,7 +136,7 @@
     "id": "generators-kbl0e9",
     "name": "Generators",
     "description": "Generators",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/generators-kbl0e9.png",
     "alt": "",
     "order": {
       "sale": 2
@@ -155,7 +155,7 @@
     "id": "petrol-engines-horizontal-shaft-onkee7",
     "name": "Petrol Engines- Horizontal Shaft",
     "description": "Petrol Engines- Horizontal Shaft ",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/petrol-engines-horizontal-shaft-onkee7.png",
     "alt": "",
     "order": {
       "sale": 3
@@ -174,7 +174,7 @@
     "id": "petrol-engines-vertical-shaft-ejhb4p",
     "name": "Petrol Engines- Vertical Shaft",
     "description": "Petrol Engines- Vertical Shaft ",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/petrol-engines-vertical-shaft-ejhb4p.png",
     "alt": "",
     "order": {
       "sale": 4
@@ -193,7 +193,7 @@
     "id": "lawn-care-qcpc0q",
     "name": "Lawn Care",
     "description": "Lawn Scarifiers\r\nLawn Edgers\r\nLawn Mowers\r\n",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/lawn-care-qcpc0q.png",
     "alt": "",
     "order": {
       "sale": 5
@@ -212,7 +212,7 @@
     "id": "excavators-oww0lq",
     "name": "Excavators",
     "description": "1T to 13.5T Excavators\r\n",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/excavators-oww0lq.png",
     "alt": "",
     "order": {
       "sale": 6
@@ -231,7 +231,7 @@
     "id": "tractors-lns9lu",
     "name": "Tractors",
     "description": "From 35Hp open cab tractors up to 100Hp cab tractors ",
-    "image": "/public/images/products/no_product_placeholder.webp",
+    "image": "/public/images/products/tractors-lns9lu.jpeg",
     "alt": "",
     "order": {
       "sale": 7

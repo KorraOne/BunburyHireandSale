@@ -16,9 +16,10 @@ Static website + small Node/Express server.
 2. Clone your repo and install deps:
 
 ```bash
-git clone <url>
-cd webpage
+git clone https://github.com/KorraOne/BunburyHireandSale.git
+cd BunburyHireandSale
 npm install
+npm install dotenv
 ```
 
 3. Create `.env`:

@@ -10,6 +10,7 @@
 
   const setOpen = (isOpen) => {
     openButton.setAttribute("aria-expanded", String(isOpen));
+    openButton.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
 
     if (isOpen) {
       drawer.hidden = false;
@@ -212,8 +213,11 @@
       card.className = "hire-card hire-card-flip";
       card.tabIndex = 0;
       card.dataset.itemId = item.id;
+      card.dataset.itemName = typeof item.name === "string" ? item.name : "";
       card.setAttribute("role", "button");
-      card.setAttribute("aria-pressed", "false");
+      const displayName = (typeof item.name === "string" && item.name.trim().length > 0 ? item.name.trim() : "Item");
+      card.setAttribute("aria-expanded", "false");
+      card.setAttribute("aria-label", `${displayName}, show details`);
 
       const inner = document.createElement("div");
       inner.className = "hire-card-inner";
@@ -266,7 +270,12 @@
     const toggle = (card) => {
       if (document.body.classList.contains("reorder-mode")) return;
       const isFlipped = card.classList.toggle("is-flipped");
-      card.setAttribute("aria-pressed", String(isFlipped));
+      card.setAttribute("aria-expanded", String(isFlipped));
+      const name =
+        (card.dataset.itemName && card.dataset.itemName.trim().length > 0
+          ? card.dataset.itemName.trim()
+          : "Item");
+      card.setAttribute("aria-label", isFlipped ? `${name}, show front` : `${name}, show details`);
     };
 
     grid.onclick = (e) => {

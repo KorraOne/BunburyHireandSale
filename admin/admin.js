@@ -185,9 +185,11 @@ document.addEventListener("DOMContentLoaded", () => {
       img.alt = item.name || "Item image";
       img.src = withPlaceholder(item.image);
       img.loading = "lazy";
+      tdThumb.setAttribute("data-label", "Thumbnail");
       tdThumb.appendChild(img);
 
       const tdName = document.createElement("td");
+      tdName.setAttribute("data-label", "Name");
       tdName.textContent = item.name || "";
 
       const tdStatus = document.createElement("td");
@@ -204,6 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
         badge.textContent = m.text;
         badges.appendChild(badge);
       }
+      tdStatus.setAttribute("data-label", "Status");
       tdStatus.appendChild(badges);
 
       const tdTags = document.createElement("td");
@@ -216,6 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
         pill.textContent = tag;
         tagsWrap.appendChild(pill);
       }
+      tdTags.setAttribute("data-label", "Tags");
       tdTags.appendChild(tagsWrap);
 
       const tdEdit = document.createElement("td");
@@ -224,6 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
       editBtn.type = "button";
       editBtn.textContent = "Edit";
       editBtn.addEventListener("click", () => openEditForm(item));
+      tdEdit.setAttribute("data-label", "Edit");
       tdEdit.appendChild(editBtn);
 
       const tdDelete = document.createElement("td");
@@ -232,6 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
       delBtn.type = "button";
       delBtn.textContent = "Delete";
       delBtn.addEventListener("click", () => openDeleteConfirm(item.id));
+      tdDelete.setAttribute("data-label", "Delete");
       tdDelete.appendChild(delBtn);
 
       tr.appendChild(tdThumb);

@@ -28,7 +28,8 @@ build/
 .cache/
 
 # --- Data ---
-# Keep your items list in git (required for the site to work),
 # but ignore local-only data dumps if you add them later.
 data/*.bak
 data/*.tmp
+data/
+public/images/products/

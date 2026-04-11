@@ -22,18 +22,27 @@
   box-sizing: border-box;
 }
 
-html,
-body {
+html {
   height: 100%;
 }
 
 body {
   margin: 0;
+  min-height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
     "Open Sans", "Helvetica Neue", sans-serif;
   line-height: 1.5;
   color: var(--neutral-grey);
   background: var(--white);
+}
+
+/* Fill space between header and footer when content is short; grow with long pages */
+main {
+  flex: 1 1 auto;
+  width: 100%;
 }
 
 /* Accessibility */
@@ -61,6 +70,7 @@ body {
 /* Home (index) page: lock to viewport, no scrolling */
 .page-home {
   height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -102,6 +112,48 @@ a {
   border-radius: 4px;
 }
 
+/* Primary actions — aligned with .reorder-toggle treatment */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: 4px;
+  padding: var(--space-8) var(--space-24);
+  min-height: 44px;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-hero {
+  background: var(--primary-blue);
+  color: var(--white);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* Landing hero CTAs: equal footprint and balanced padding */
+.hero-cta-inner .btn-hero {
+  min-height: 48px;
+  padding: 12px var(--space-16);
+  text-align: center;
+}
+
+.btn-hero:hover {
+  background: var(--dark-navy);
+  color: var(--white);
+}
+
+.btn-hero:focus-visible {
+  outline: 4px solid var(--white);
+  outline-offset: 4px;
+}
+
 h1,
 h2,
 h3,
@@ -136,6 +188,14 @@ button {
   margin: var(--space-16) 0 0 0;
   font-weight: 500;
   color: var(--neutral-grey);
+}
+
+.services-header h1 {
+  text-align: center;
+}
+
+.services-lede {
+  text-align: left;
 }
 
 .hire-grid {
@@ -367,6 +427,7 @@ button {
   position: sticky;
   top: 0;
   z-index: 50;
+  flex-shrink: 0;
   background: var(--white);
   border-bottom: 1px solid #ddd;
 }
@@ -527,10 +588,33 @@ button {
 .hero-overlay {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: rgba(0, 0, 0, 0.25);
 }
 
+.hero-cta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18%;
+  z-index: 2;
+  padding: 0 var(--space-16);
+  pointer-events: none;
+}
+
+.hero-cta-inner {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  gap: var(--space-24);
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
 .site-footer {
+  flex-shrink: 0;
   background: var(--dark-navy);
   color: var(--white);
   padding: var(--space-24);
@@ -552,6 +636,11 @@ button {
     display: none;
   }
 
+  .hero-cta-inner .btn-hero {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
   .brands-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -563,6 +652,25 @@ button {
 }
 
 @media (max-width: 768px) {
+  .services-lede {
+    text-align: center;
+  }
+
+  .hero-cta {
+    bottom: 10%;
+  }
+
+  .hero-cta-inner {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+
+  .hero-cta-inner .btn-hero {
+    flex: none;
+    width: 100%;
+  }
+
   .hire-grid {
     display: flex;
     flex-direction: column;

@@ -338,11 +338,3 @@ img {
   justify-content: flex-end;
   gap: 16px;
 }
-
-@media (max-width: 800px) {
-  .admin-table th:nth-child(3),
-  .admin-table td:nth-child(3) {
-    display: none;
-  }
-}
-

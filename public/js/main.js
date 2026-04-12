@@ -1,4 +1,48 @@
-(() => {
+async function loadPublicTemplateIncludes() {
+  const nav = document.getElementById("site-nav-include");
+  const footer = document.getElementById("site-footer-include");
+  if (!nav && !footer) return;
+  try {
+    const [navHtml, footerHtml] = await Promise.all([
+      nav
+        ? fetch("/templates/nav.html").then((r) => {
+            if (!r.ok) throw new Error("nav");
+            return r.text();
+          })
+        : Promise.resolve(null),
+      footer
+        ? fetch("/templates/footer.html").then((r) => {
+            if (!r.ok) throw new Error("footer");
+            return r.text();
+          })
+        : Promise.resolve(null),
+    ]);
+    if (nav && navHtml != null) nav.outerHTML = navHtml;
+    if (footer && footerHtml != null) footer.outerHTML = footerHtml;
+  } catch (e) {
+    console.error("Failed to load template includes", e);
+  }
+}
+
+function setActiveNavFromDataAttr() {
+  const key = document.body.dataset.navActive;
+  if (!key) return;
+  const hrefByKey = {
+    home: "/index.html",
+    hire: "/hire.html",
+    sales: "/sales.html",
+    services: "/services.html",
+    about: "/about.html",
+    contact: "/contact.html",
+  };
+  const targetHref = hrefByKey[key];
+  if (!targetHref) return;
+  document.querySelectorAll(".nav-link, .mobile-drawer-link").forEach((el) => {
+    el.classList.toggle("is-active", el.getAttribute("href") === targetHref);
+  });
+}
+
+function initMobileDrawer() {
   const openButton = document.querySelector(".nav-hamburger");
   const drawer = document.getElementById("mobile-drawer");
   const backdrop = document.querySelector("[data-drawer-backdrop]");
@@ -67,9 +111,9 @@
       first.focus();
     }
   });
-})();
+}
 
-(() => {
+function initHireSalesPages() {
   const PLACEHOLDER_IMAGE = "/public/images/products/no_product_placeholder.webp";
   const MISSING_DESC_MESSAGE = "No description or details have been added yet.";
 
@@ -330,4 +374,11 @@
 
   loadAndRender("hire", "[data-hire-grid]");
   loadAndRender("sale", "[data-sales-grid]");
-})();
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadPublicTemplateIncludes();
+  setActiveNavFromDataAttr();
+  initMobileDrawer();
+  initHireSalesPages();
+});

@@ -79,6 +79,47 @@
               </div>
             </div>
           </div>
+
+          <div class="contact-card contact-card-full">
+            <div class="contact-label">Send us a message</div>
+
+            <div class="form-banner form-banner-success" data-banner="sent" role="status" aria-live="polite">
+              Your message has been sent.
+            </div>
+            <div class="form-banner form-banner-error" data-banner="error" role="alert">
+              There was a problem sending your message.
+            </div>
+
+            <form action="/contact-submit" method="POST" class="contact-form">
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="contact-name">Name</label>
+                  <input id="contact-name" name="name" type="text" required autocomplete="name" />
+                </div>
+
+                <div class="form-field">
+                  <label for="contact-email">Email</label>
+                  <input id="contact-email" name="email" type="email" required autocomplete="email" />
+                </div>
+
+                <div class="form-field">
+                  <label for="contact-phone">Phone (optional)</label>
+                  <input id="contact-phone" name="phone" type="tel" autocomplete="tel" />
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="contact-message">Message</label>
+                <textarea id="contact-message" name="message" rows="6" required></textarea>
+              </div>
+
+              <input type="text" name="website" class="hp-field" autocomplete="off" tabindex="-1" />
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-hero">Send message</button>
+              </div>
+            </form>
+          </div>
         </div>
       </section>
     </main>
@@ -86,5 +127,16 @@
     <div id="site-footer-include"></div>
 
     <script src="/public/js/main.js"></script>
+    <script>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var sent = params.get("sent") === "1";
+        var error = params.get("error") === "1";
+        var sentEl = document.querySelector('[data-banner="sent"]');
+        var errEl = document.querySelector('[data-banner="error"]');
+        if (sentEl) sentEl.style.display = sent ? "block" : "none";
+        if (errEl) errEl.style.display = error ? "block" : "none";
+      })();
+    </script>
   </body>
 </html>

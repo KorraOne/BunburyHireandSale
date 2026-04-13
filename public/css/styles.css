@@ -166,6 +166,19 @@ a {
   outline-offset: 4px;
 }
 
+/* Floating admin button (only injected when authenticated) */
+.admin-fab {
+  position: fixed;
+  right: var(--space-16);
+  /* Keep clear of the reorder toggle (also bottom-right) */
+  bottom: calc(var(--space-16) + 64px);
+  z-index: 1100;
+  border-radius: 999px;
+  padding: 10px 14px;
+  min-height: 44px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+}
+
 h1,
 h2,
 h3,

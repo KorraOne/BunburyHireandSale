@@ -7,33 +7,36 @@ Static website + small Node/Express server.
 - Public site pages: `index.html`, `hire.html`, `sales.html`, `about.html`, `contact.html`
 - Public assets: `public/`
 - Data source: `data/items.json`
+- Contact submissions log (local safety net): `data/contact_submissions.json`
 - Admin UI: `admin/` (protected by HTTP Basic Auth)
 - Server: `server.js`
 
 ## Setup
 
 1. Install Node.js.
-2. Clone your repo and install deps:
+2. Install dependencies:
 
 ```bash
-git clone https://github.com/KorraOne/BunburyHireandSale.git
-cd BunburyHireandSale
 npm install
-npm install dotenv
 ```
 
-3. Create `.env`:
+3. Create `.env` (required for admin + contact form email):
+
+Example `.env`:
 
 ```bash
-nano .env
-```
+# Server
+PORT=3000
 
-Example:
-
-```bash
+# Admin (HTTP Basic Auth)
 ADMIN_USER=admin
 ADMIN_PASS=your-strong-password
-PORT=3000
+
+# Contact form SMTP (HostGator)
+CONTACT_SMTP_HOST=cloud14.hostgator.com
+CONTACT_SMTP_PORT=465
+CONTACT_SMTP_USER=sales@bunburyhire.com.au
+CONTACT_SMTP_PASS=PASSWORD
 ```
 
 4. Start:
@@ -41,10 +44,3 @@ PORT=3000
 ```bash
 npm start
 ```
-
-## Notes
-
-- `data/items.json` is tracked in git so the site works after cloning.
-- Product images live in `public/images/products/`.
-- The placeholder image is `public/images/products/no_product_placeholder.webp`.
-

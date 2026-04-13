@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Form Messages</title>
+    <link rel="icon" href="/public/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/admin/admin.css" />
+    <link rel="stylesheet" href="/public/css/admin.css" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <div class="admin-container admin-header-inner">
+        <h1>Contact Form Messages</h1>
+        <div class="admin-header-actions">
+          <a class="btn btn-secondary" href="/">Home</a>
+          <a class="btn btn-secondary" href="/admin">Back to dashboard</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-container admin-main">
+      <div class="card">
+        <table class="admin-table" aria-label="Contact form messages">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>IP</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody id="messagesTbody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState" hidden>No messages yet.</div>
+      </div>
+    </main>
+
+    <script>
+      (function () {
+        var tbody = document.getElementById("messagesTbody");
+        var empty = document.getElementById("emptyState");
+
+        function escapeText(value) {
+          return String(value == null ? "" : value);
+        }
+
+        function formatTimestamp(iso) {
+          var d = new Date(iso);
+          if (!Number.isFinite(d.getTime())) return escapeText(iso);
+          return d.toLocaleString();
+        }
+
+        function makeTd(label, text, className) {
+          var td = document.createElement("td");
+          td.setAttribute("data-label", label);
+          if (className) td.className = className;
+          td.textContent = escapeText(text);
+          return td;
+        }
+
+        function render(list) {
+          tbody.replaceChildren();
+
+          if (!Array.isArray(list) || list.length === 0) {
+            empty.hidden = false;
+            return;
+          }
+
+          empty.hidden = true;
+          for (var i = 0; i < list.length; i += 1) {
+            var m = list[i] || {};
+            var tr = document.createElement("tr");
+            tr.appendChild(makeTd("Timestamp", formatTimestamp(m.timestamp)));
+            tr.appendChild(makeTd("Name", m.name));
+            tr.appendChild(makeTd("Email", m.email));
+            tr.appendChild(makeTd("Phone", m.phone || ""));
+            tr.appendChild(makeTd("IP", m.ip || ""));
+            tr.appendChild(makeTd("Message", m.message, "message-cell"));
+            tbody.appendChild(tr);
+          }
+        }
+
+        fetch("/admin/api/messages")
+          .then(function (res) {
+            if (!res.ok) throw new Error("Failed to load messages");
+            return res.json();
+          })
+          .then(function (data) {
+            render(data);
+          })
+          .catch(function (err) {
+            empty.hidden = false;
+            empty.textContent = err && err.message ? err.message : "Failed to load messages.";
+          });
+      })();
+    </script>
+  </body>
+</html>
+

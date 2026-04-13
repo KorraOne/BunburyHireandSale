@@ -138,5 +138,21 @@
         if (errEl) errEl.style.display = error ? "block" : "none";
       })();
     </script>
+    <script>
+      (function () {
+        fetch("/admin/ping", { cache: "no-store" })
+          .then(function (res) {
+            if (!res || res.status !== 200) return;
+            var a = document.createElement("a");
+            a.href = "/admin";
+            a.className = "btn btn-hero admin-fab";
+            a.textContent = "Admin";
+            document.body.appendChild(a);
+          })
+          .catch(function () {
+            // not authed
+          });
+      })();
+    </script>
   </body>
 </html>

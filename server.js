@@ -231,6 +231,16 @@ const adminAuth = basicAuth({
 app.use("/admin", adminAuth);
 app.use("/admin/api", adminAuth);
 
+// Admin-only: messages viewer page (explicit route)
+app.get("/admin/messages", adminAuth, (_req, res) => {
+  res.sendFile(path.join(ROOT_DIR, "admin", "messages.html"));
+});
+
+// Admin-only: auth check for public pages
+app.get("/admin/ping", adminAuth, (_req, res) => {
+  res.json({ ok: true });
+});
+
 // Serve admin UI
 app.use("/admin", express.static(path.join(ROOT_DIR, "admin"), { index: "index.html" }));
 
@@ -266,6 +276,30 @@ function makeStorage() {
 }
 
 const upload = multer({ storage: makeStorage() });
+
+app.get("/admin/api/messages", (_req, res) => {
+  const file = path.join(ROOT_DIR, "data", "contact_submissions.json");
+  let messages = [];
+  try {
+    if (fs.existsSync(file)) {
+      const raw = fs.readFileSync(file, "utf8");
+      if (raw && raw.trim().length > 0) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) messages = parsed;
+      }
+    }
+  } catch {
+    messages = [];
+  }
+
+  const sorted = [...messages].sort((a, b) => {
+    const ta = Date.parse(a?.timestamp || "") || 0;
+    const tb = Date.parse(b?.timestamp || "") || 0;
+    return tb - ta;
+  });
+
+  res.json(sorted);
+});
 
 app.get("/admin/api/items", (req, res) => {
   const items = normalizeItems(readItems());

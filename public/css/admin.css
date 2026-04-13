@@ -29,3 +29,8 @@
     flex-shrink: 0;
   }
 }
+
+.message-cell {
+  white-space: pre-wrap;
+  word-break: break-word;
+}

@@ -9,6 +9,9 @@ const crypto = require("crypto");
 
 const app = express();
 
+// Required behind Cloudflare Tunnel / reverse proxies (rate-limit relies on this for X-Forwarded-For)
+app.set("trust proxy", 1);
+
 const ROOT_DIR = __dirname;
 const DATA_FILE = path.join(ROOT_DIR, "data", "items.json");
 const PRODUCTS_DIR = path.join(ROOT_DIR, "public", "images", "products");

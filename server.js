@@ -235,8 +235,14 @@ app.use("/admin", express.static(path.join(ROOT_DIR, "admin"), { index: "index.h
 app.use("/public", express.static(path.join(ROOT_DIR, "public")));
 app.use(express.static(ROOT_DIR));
 
+// Form bodies (contact form)
+app.use(express.urlencoded({ extended: false }));
+
 // JSON body for admin API helpers (e.g., reorder)
 app.use(express.json({ limit: "1mb" }));
+
+// Public routes
+app.use("/", require("./routes/contact"));
 
 function makeStorage() {
   return multer.diskStorage({

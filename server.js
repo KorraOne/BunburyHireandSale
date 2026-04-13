@@ -233,6 +233,13 @@ app.use("/admin", express.static(path.join(ROOT_DIR, "admin"), { index: "index.h
 
 // Static files (public site)
 app.use("/public", express.static(path.join(ROOT_DIR, "public")));
+
+// Friendly page routes (so /contact maps to contact.html)
+app.get("/contact", (_req, res) => {
+  res.sendFile(path.join(ROOT_DIR, "contact.html"));
+});
+
+// Serve top-level HTML pages (index.html, hire.html, contact.html, etc.)
 app.use(express.static(ROOT_DIR));
 
 // Form bodies (contact form)

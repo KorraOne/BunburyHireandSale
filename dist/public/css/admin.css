@@ -1,0 +1,36 @@
+/* Admin dashboard: responsive stacked table (used with admin/index.html) */
+
+@media (max-width: 700px) {
+  table.admin-table thead {
+    display: none;
+  }
+
+  table.admin-table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+    border-radius: 6px;
+  }
+
+  table.admin-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+    border-bottom: none;
+  }
+
+  table.admin-table tbody td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    margin-right: 1rem;
+    flex-shrink: 0;
+  }
+}
+
+.message-cell {
+  white-space: pre-wrap;
+  word-break: break-word;
+}

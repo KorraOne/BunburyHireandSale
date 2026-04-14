@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Marks this browser session as admin-authenticated (after /admin login),
     // so public pages can enable reorder mode without probing protected routes.
     localStorage.setItem("adminAuthed", "1");
+    localStorage.setItem("adminAuthedAt", String(Date.now()));
   } catch {
     // ignore
   }

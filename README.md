@@ -58,7 +58,8 @@ PORT=3000
 ADMIN_USER=admin
 ADMIN_PASS=your-strong-password
 
-CONTACT_SMTP_HOST=cloud14.hostgator.com
+# Email (Your Host Details)
+CONTACT_SMTP_HOST=Host
 CONTACT_SMTP_PORT=465
 CONTACT_SMTP_USER=sales@bunburyhire.com.au
 CONTACT_SMTP_PASS=your-strong-password

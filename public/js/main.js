@@ -136,7 +136,20 @@ function initHireSalesPages() {
     // Instead, enable reorder only after the admin has logged into /admin/ in this browser.
     let isAdmin = false;
     try {
-      isAdmin = localStorage.getItem("adminAuthed") === "1";
+      const TTL_MS = 1000 * 60 * 60 * 12; // 12 hours
+      const authed = localStorage.getItem("adminAuthed") === "1";
+      const authedAtRaw = localStorage.getItem("adminAuthedAt");
+      const authedAt = Number(authedAtRaw);
+      const fresh = Number.isFinite(authedAt) && Date.now() - authedAt < TTL_MS;
+
+      // If the flag is stale/missing, clear it so public pages never trigger auth prompts.
+      if (!authed || !fresh) {
+        localStorage.removeItem("adminAuthed");
+        localStorage.removeItem("adminAuthedAt");
+        isAdmin = false;
+      } else {
+        isAdmin = true;
+      }
     } catch {
       isAdmin = false;
     }
@@ -232,6 +245,7 @@ function initHireSalesPages() {
         if (String(e?.message || "").includes("(401)")) {
           try {
             localStorage.removeItem("adminAuthed");
+            localStorage.removeItem("adminAuthedAt");
           } catch {
             // ignore
           }

@@ -1,12 +1,12 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
-const contactRateLimit = require("../middleware/middleware/contactRateLimit");
+const contactRateLimit = require("../middleware/contactRateLimit");
 const { sendContactEmail } = require("../services/mail/contactMailer");
 
 const router = express.Router();
 
-const CONTACT_LOG_FILE = path.join(__dirname, "..", "data", "contact_submissions.json");
+const CONTACT_LOG_FILE = path.join(__dirname, "..", "..", "..", "data", "contact_submissions.json");
 
 function isNonEmptyString(value) {
   return typeof value === "string" && value.trim().length > 0;
@@ -55,7 +55,7 @@ router.post("/contact-submit", contactRateLimit, async (req, res) => {
     }
 
     if (!isNonEmptyString(name) || !isNonEmptyString(message) || !isValidEmail(email)) {
-      res.redirect("/contact?error=1");
+      res.redirect("/contact?error=1#send-message");
       return;
     }
 
@@ -81,9 +81,9 @@ router.post("/contact-submit", contactRateLimit, async (req, res) => {
       message: submission.message,
     });
 
-    res.redirect("/contact?sent=1");
+    res.redirect("/contact?sent=1#send-message");
   } catch (_err) {
-    res.redirect("/contact?error=1");
+    res.redirect("/contact?error=1#send-message");
   }
 });
 

@@ -14,6 +14,7 @@ app.set("trust proxy", 1);
 
 const ROOT_DIR = __dirname;
 const DIST_DIR = path.join(ROOT_DIR, "dist");
+const SRC_DIR = path.join(ROOT_DIR, "src");
 const DATA_FILE = path.join(ROOT_DIR, "data", "items.json");
 const PRODUCTS_DIR = path.join(ROOT_DIR, "public", "images", "products");
 const PRODUCTS_DIR_RESOLVED = path.resolve(PRODUCTS_DIR) + path.sep;
@@ -234,7 +235,7 @@ app.use("/admin/api", adminAuth);
 
 // Admin-only: messages viewer page (explicit route)
 app.get("/admin/messages", adminAuth, (_req, res) => {
-  res.sendFile(path.join(ROOT_DIR, "admin", "messages.html"));
+  res.sendFile(path.join(SRC_DIR, "admin", "messages.html"));
 });
 
 // Admin-only: auth check for public pages
@@ -243,7 +244,7 @@ app.get("/admin/ping", adminAuth, (_req, res) => {
 });
 
 // Serve admin UI
-app.use("/admin", express.static(path.join(ROOT_DIR, "admin"), { index: "index.html" }));
+app.use("/admin", express.static(path.join(SRC_DIR, "admin"), { index: "index.html" }));
 
 // Static files (public site)
 app.use("/public", express.static(path.join(DIST_DIR, "public")));
@@ -264,7 +265,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json({ limit: "1mb" }));
 
 // Public routes
-app.use("/", require("./routes/contact"));
+app.use("/", require("./src/server/routes/contact"));
 
 function makeStorage() {
   return multer.diskStorage({

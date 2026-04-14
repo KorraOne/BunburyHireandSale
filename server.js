@@ -13,6 +13,7 @@ const app = express();
 app.set("trust proxy", 1);
 
 const ROOT_DIR = __dirname;
+const DIST_DIR = path.join(ROOT_DIR, "dist");
 const DATA_FILE = path.join(ROOT_DIR, "data", "items.json");
 const PRODUCTS_DIR = path.join(ROOT_DIR, "public", "images", "products");
 const PRODUCTS_DIR_RESOLVED = path.resolve(PRODUCTS_DIR) + path.sep;
@@ -245,15 +246,16 @@ app.get("/admin/ping", adminAuth, (_req, res) => {
 app.use("/admin", express.static(path.join(ROOT_DIR, "admin"), { index: "index.html" }));
 
 // Static files (public site)
-app.use("/public", express.static(path.join(ROOT_DIR, "public")));
+app.use("/public", express.static(path.join(DIST_DIR, "public")));
+app.use("/data", express.static(path.join(DIST_DIR, "data")));
 
 // Friendly page routes (so /contact maps to contact.html)
 app.get("/contact", (_req, res) => {
-  res.sendFile(path.join(ROOT_DIR, "contact.html"));
+  res.sendFile(path.join(DIST_DIR, "contact.html"));
 });
 
-// Serve top-level HTML pages (index.html, hire.html, contact.html, etc.)
-app.use(express.static(ROOT_DIR));
+// Serve built HTML pages (index.html, hire.html, contact.html, etc.)
+app.use(express.static(DIST_DIR));
 
 // Form bodies (contact form)
 app.use(express.urlencoded({ extended: false }));

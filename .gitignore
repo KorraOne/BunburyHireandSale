@@ -9,6 +9,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+node_trace.*.log
 
 # --- Runtime files ---
 *.log
@@ -23,13 +24,14 @@ Desktop.ini
 .cursor/
 
 # --- Build / cache ---
-dist/
+# dist/ is deploy output; keep it tracked if desired.
 build/
 .cache/
 
-# --- Data ---
-# but ignore local-only data dumps if you add them later.
+# --- Local-only data / backups ---
 data/*.bak
 data/*.tmp
-data/
-public/images/products/
+data/contact_submissions.json
+
+# --- Optional local folders (keep repo clean) ---
+coverage/

@@ -1,47 +1,3 @@
-async function loadPublicTemplateIncludes() {
-  const nav = document.getElementById("site-nav-include");
-  const footer = document.getElementById("site-footer-include");
-  if (!nav && !footer) return;
-  try {
-    const [navHtml, footerHtml] = await Promise.all([
-      nav
-        ? fetch("/templates/nav.html").then((r) => {
-            if (!r.ok) throw new Error("nav");
-            return r.text();
-          })
-        : Promise.resolve(null),
-      footer
-        ? fetch("/templates/footer.html").then((r) => {
-            if (!r.ok) throw new Error("footer");
-            return r.text();
-          })
-        : Promise.resolve(null),
-    ]);
-    if (nav && navHtml != null) nav.outerHTML = navHtml;
-    if (footer && footerHtml != null) footer.outerHTML = footerHtml;
-  } catch (e) {
-    console.error("Failed to load template includes", e);
-  }
-}
-
-function setActiveNavFromDataAttr() {
-  const key = document.body.dataset.navActive;
-  if (!key) return;
-  const hrefByKey = {
-    home: "/index.html",
-    hire: "/hire.html",
-    sales: "/sales.html",
-    services: "/services.html",
-    about: "/about.html",
-    contact: "/contact.html",
-  };
-  const targetHref = hrefByKey[key];
-  if (!targetHref) return;
-  document.querySelectorAll(".nav-link, .mobile-drawer-link").forEach((el) => {
-    el.classList.toggle("is-active", el.getAttribute("href") === targetHref);
-  });
-}
-
 function initMobileDrawer() {
   const openButton = document.querySelector(".nav-hamburger");
   const drawer = document.getElementById("mobile-drawer");
@@ -130,36 +86,9 @@ function initHireSalesPages() {
     return Number.isFinite(n) ? n : fallback;
   };
 
-  const ADMIN_TTL_MS = 1000 * 60 * 60 * 12; // 12 hours
-
-  const hasFreshAdminAuthFlag = () => {
-    try {
-      const authed = localStorage.getItem("adminAuthed") === "1";
-      const authedAt = Number(localStorage.getItem("adminAuthedAt"));
-      const fresh = Number.isFinite(authedAt) && Date.now() - authedAt < ADMIN_TTL_MS;
-      if (authed && fresh) return true;
-      // If the flag is stale/missing, clear it so public pages never trigger auth prompts.
-      localStorage.removeItem("adminAuthed");
-      localStorage.removeItem("adminAuthedAt");
-      return false;
-    } catch {
-      return false;
-    }
-  };
-
-  // Only call /admin/ping if we have a fresh admin auth flag.
-  // This function is NEVER called automatically on page load.
-  const pingAdminIfAllowed = async () => {
-    if (!hasFreshAdminAuthFlag()) return false;
-    const res = await fetch("/admin/ping", { credentials: "include" });
-    return res.ok;
-  };
-
-  // Admin-only reorder mode detection (avoid showing controls to visitors)
   const setupReorderButton = async (pageKey, grid, itemsById, render) => {
-    // Never probe protected routes from public pages (avoids any auth prompts).
-    // Instead, enable reorder only after the admin has logged into /admin/ in this browser.
-    if (!hasFreshAdminAuthFlag()) return;
+    // Admin-only reorder toggle: use the single global set by admin-public.js (no localStorage duplication here).
+    if (window.__adminPublicAuthed !== true) return;
 
     const btn = document.createElement("button");
     btn.type = "button";
@@ -219,11 +148,8 @@ function initHireSalesPages() {
         return;
       }
 
-      // Persist current DOM order for this page only
+      // Persist current DOM order for this page only (explicit click only).
       try {
-        // Optional: confirm the session is still valid only when saving.
-        // This call is gated by the fresh localStorage auth flag and only runs on explicit click.
-        await pingAdminIfAllowed();
         const order = buildPayloadFromDom();
         const res = await fetch("/admin/api/items/reorderPage", {
           method: "POST",
@@ -252,12 +178,6 @@ function initHireSalesPages() {
       } catch (e) {
         // If auth expired, hide the button and stop showing reorder mode on public pages.
         if (String(e?.message || "").includes("(401)")) {
-          try {
-            localStorage.removeItem("adminAuthed");
-            localStorage.removeItem("adminAuthedAt");
-          } catch {
-            // ignore
-          }
           btn.remove();
           document.body.classList.remove("reorder-mode");
           return;
@@ -282,7 +202,8 @@ function initHireSalesPages() {
       card.dataset.itemId = item.id;
       card.dataset.itemName = typeof item.name === "string" ? item.name : "";
       card.setAttribute("role", "button");
-      const displayName = (typeof item.name === "string" && item.name.trim().length > 0 ? item.name.trim() : "Item");
+      const displayName =
+        typeof item.name === "string" && item.name.trim().length > 0 ? item.name.trim() : "Item";
       card.setAttribute("aria-expanded", "false");
       card.setAttribute("aria-label", `${displayName}, show details`);
 
@@ -339,9 +260,9 @@ function initHireSalesPages() {
       const isFlipped = card.classList.toggle("is-flipped");
       card.setAttribute("aria-expanded", String(isFlipped));
       const name =
-        (card.dataset.itemName && card.dataset.itemName.trim().length > 0
+        card.dataset.itemName && card.dataset.itemName.trim().length > 0
           ? card.dataset.itemName.trim()
-          : "Item");
+          : "Item";
       card.setAttribute("aria-label", isFlipped ? `${name}, show front` : `${name}, show details`);
     };
 
@@ -391,7 +312,10 @@ function initHireSalesPages() {
         await setupReorderButton(pageKey, grid, byId, render);
       })
       .catch(() => {
-        grid.textContent = pageKey === "hire" ? "No hire items available at the moment." : "No items for sale available at the moment.";
+        grid.textContent =
+          pageKey === "hire"
+            ? "No hire items available at the moment."
+            : "No items for sale available at the moment.";
       });
   };
 
@@ -399,9 +323,7 @@ function initHireSalesPages() {
   loadAndRender("sale", "[data-sales-grid]");
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadPublicTemplateIncludes();
-  setActiveNavFromDataAttr();
+document.addEventListener("DOMContentLoaded", () => {
   initMobileDrawer();
   initHireSalesPages();
 });

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hire Equipment — Bunbury Hire &amp; Sales</title>
+    <meta name="description" content="Industrial equipment for hire in Bunbury. Tools, trailers, forklifts, tractors, excavators and more." />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ESJYYFBQX9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ESJYYFBQX9');
+    </script>
+
+    <link rel="icon" href="/public/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/public/css/styles.css" />
+
+
+  </head>
+  <body class="site">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="nav">
+        <a class="nav-logo" href="/index.html" aria-label="Bunbury Hire &amp; Sales — Home">
+          <img
+            src="/public/images/logos/logo_wide_transparent.svg"
+            alt=""
+            width="240"
+            height="48"
+          />
+        </a>
+
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="/index.html">Home</a>
+          <a class="nav-link is-active" href="/hire.html">Hire</a>
+          <a class="nav-link" href="/sales.html">Sales</a>
+          <a class="nav-link" href="/services.html">Services</a>
+          <a class="nav-link" href="/about.html">About</a>
+          <a class="nav-link" href="/contact.html">Contact</a>
+        </nav>
+
+        <button
+          class="nav-hamburger"
+          type="button"
+          aria-label="Open menu"
+          aria-controls="mobile-drawer"
+          aria-expanded="false"
+        >
+          <span class="hamburger-lines" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="drawer-backdrop" data-drawer-backdrop hidden></div>
+    <aside
+      id="mobile-drawer"
+      class="mobile-drawer"
+      aria-label="Mobile navigation"
+      aria-hidden="true"
+      hidden
+    >
+      <div class="mobile-drawer-header">
+        <img
+          class="mobile-drawer-logo"
+          src="/public/images/logos/logo_wide_transparent.svg"
+          alt="Bunbury Hire & Sales"
+          width="220"
+          height="44"
+        />
+      </div>
+      <nav class="mobile-drawer-links">
+        <a class="mobile-drawer-link" href="/index.html">Home</a>
+        <a class="mobile-drawer-link is-active" href="/hire.html">Hire</a>
+        <a class="mobile-drawer-link" href="/sales.html">Sales</a>
+        <a class="mobile-drawer-link" href="/services.html">Services</a>
+        <a class="mobile-drawer-link" href="/about.html">About</a>
+        <a class="mobile-drawer-link" href="/contact.html">Contact</a>
+      </nav>
+    </aside>
+
+
+
+    <main id="main">
+      <section class="hire-header">
+        <div class="container">
+          <h1>Equipment for Hire</h1>
+          <p>
+            Bunbury Hire &amp; Sales offers a wide range of industrial equipment for hire, from small tools to
+            heavy machinery. Find out more by <a class="text-link" href="/contact.html">contacting us</a>.
+          </p>
+        </div>
+      </section>
+
+      <section class="hire-section">
+        <div class="container">
+          <div class="hire-grid cards-grid" data-hire-grid></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/public/js/Sortable.min.js" defer></script>
+
+
+
+    <footer class="site-footer">
+      <div class="footer-inner">© Bunbury Hire &amp; Sales</div>
+    </footer>
+
+
+
+    <script>
+(function () {
+  // Admin-on-public logic (single source of truth).
+  // No /admin/* requests are made from public pages.
+  try {
+    var TTL_MS = 1000 * 60 * 60 * 12; // 12 hours
+    var authed = localStorage.getItem("adminAuthed") === "1";
+    var authedAt = Number(localStorage.getItem("adminAuthedAt"));
+    var fresh = Number.isFinite(authedAt) && Date.now() - authedAt < TTL_MS;
+    if (!authed || !fresh) return;
+  } catch (e) {
+    return;
+  }
+
+  // Expose to other public scripts (e.g., reorder toggle) without duplicating auth logic.
+  window.__adminPublicAuthed = true;
+
+  var a = document.createElement("a");
+  a.href = "/admin";
+  a.className = "btn btn-hero admin-fab";
+  a.textContent = "Admin";
+  document.body.appendChild(a);
+})();
+
+
+    </script>
+    <script src="/public/js/main.js"></script>
+  </body>
+</html>
+

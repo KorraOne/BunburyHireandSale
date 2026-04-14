@@ -197,7 +197,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const badges = document.createElement("div");
       badges.className = "badges";
       const missing = [];
-      if (!item.description || String(item.description).trim().length === 0) missing.push({ kind: "warn", text: "No description" });
+      if (!item.description || String(item.description).trim().length === 0)
+        missing.push({ kind: "warn", text: "No description" });
       if (!item.image || String(item.image).trim().length === 0) missing.push({ kind: "bad", text: "No image" });
       if (!item.alt || String(item.alt).trim().length === 0) missing.push({ kind: "warn", text: "No alt text" });
       if (missing.length === 0) missing.push({ kind: "ok", text: "OK" });

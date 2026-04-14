@@ -165,7 +165,6 @@ img {
   gap: 8px;
 }
 
-
 .btn {
   background: var(--primary-blue);
   color: var(--white);
@@ -373,3 +372,4 @@ img {
     padding: 20px 0 28px;
   }
 }
+

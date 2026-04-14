@@ -11,8 +11,8 @@ Static multi-page website + small Node/Express server + lightweight build step (
   - `src/js/`: small JS modules (drawer + listings + bootstrap)
 - **Build script**: `scripts/build.js`
 - **Generated static output**: `dist/`
-- **Runtime assets**: `public/` (CSS, images, JS output)
-- **Data source**: `data/items.json`
+- **Assets (source)**: `public/` (CSS, images, vendor JS)
+- **Data (source)**: `data/` (`items.json`, `contact_submissions.json`)
 - **Admin UI**: `admin/` (protected by HTTP Basic Auth)
 - **Server**: `server.js`
 
@@ -31,6 +31,14 @@ This produces:
 - `dist/data/*` (copied data)
  
 The Express server serves the public site from `dist/`.
+
+## Keeping things simple (single source of truth)
+
+- Edit **templates/pages/JS modules** in `src/`.
+- Edit **assets** in `public/` and **data** in `data/`.
+- Do not hand-edit `dist/` — it is generated and will be overwritten by `npm run build`.
+
+Optional: you can migrate assets/data into `src/public` and `src/data`. The build script will prefer those folders if they exist.
 
 ## Deploy (recommended)
 

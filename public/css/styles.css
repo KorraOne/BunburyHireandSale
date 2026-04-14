@@ -479,7 +479,7 @@ button {
 }
 
 .form-banner {
-  display: none;
+  display: block;
   padding: 12px 14px;
   border-radius: 6px;
   font-weight: 600;
@@ -487,12 +487,14 @@ button {
 }
 
 .form-banner-success {
+  display: none;
   background: #e8f7ee;
   border: 1px solid #2e7d32;
   color: #1b5e20;
 }
 
 .form-banner-error {
+  display: none;
   background: #fdecea;
   border: 1px solid #c62828;
   color: #8e0000;

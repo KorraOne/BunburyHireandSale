@@ -7,6 +7,13 @@ const DIST = path.join(ROOT, "dist");
 
 const read = (p) => fs.readFileSync(p, "utf8");
 const ensureDir = (p) => fs.mkdirSync(p, { recursive: true });
+const exists = (p) => {
+  try {
+    return fs.existsSync(p);
+  } catch {
+    return false;
+  }
+};
 
 const copyDir = (from, to) => {
   ensureDir(to);
@@ -107,8 +114,12 @@ function main() {
   const adminPublic = read(path.join(SRC, "partials", "admin-public.js"));
 
   // Assets
-  copyDir(path.join(ROOT, "public"), path.join(DIST, "public"));
-  copyDir(path.join(ROOT, "data"), path.join(DIST, "data"));
+  // Prefer src-owned assets if present (cleaner single source of truth).
+  // Fallback to root folders for backwards compatibility.
+  const publicSrc = exists(path.join(SRC, "public")) ? path.join(SRC, "public") : path.join(ROOT, "public");
+  const dataSrc = exists(path.join(SRC, "data")) ? path.join(SRC, "data") : path.join(ROOT, "data");
+  copyDir(publicSrc, path.join(DIST, "public"));
+  copyDir(dataSrc, path.join(DIST, "data"));
 
   // JS bundle (public)
   ensureDir(path.join(DIST, "public", "js"));

@@ -130,30 +130,36 @@ function initHireSalesPages() {
     return Number.isFinite(n) ? n : fallback;
   };
 
+  const ADMIN_TTL_MS = 1000 * 60 * 60 * 12; // 12 hours
+
+  const hasFreshAdminAuthFlag = () => {
+    try {
+      const authed = localStorage.getItem("adminAuthed") === "1";
+      const authedAt = Number(localStorage.getItem("adminAuthedAt"));
+      const fresh = Number.isFinite(authedAt) && Date.now() - authedAt < ADMIN_TTL_MS;
+      if (authed && fresh) return true;
+      // If the flag is stale/missing, clear it so public pages never trigger auth prompts.
+      localStorage.removeItem("adminAuthed");
+      localStorage.removeItem("adminAuthedAt");
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
+  // Only call /admin/ping if we have a fresh admin auth flag.
+  // This function is NEVER called automatically on page load.
+  const pingAdminIfAllowed = async () => {
+    if (!hasFreshAdminAuthFlag()) return false;
+    const res = await fetch("/admin/ping", { credentials: "include" });
+    return res.ok;
+  };
+
   // Admin-only reorder mode detection (avoid showing controls to visitors)
   const setupReorderButton = async (pageKey, grid, itemsById, render) => {
     // Never probe protected routes from public pages (avoids any auth prompts).
     // Instead, enable reorder only after the admin has logged into /admin/ in this browser.
-    let isAdmin = false;
-    try {
-      const TTL_MS = 1000 * 60 * 60 * 12; // 12 hours
-      const authed = localStorage.getItem("adminAuthed") === "1";
-      const authedAtRaw = localStorage.getItem("adminAuthedAt");
-      const authedAt = Number(authedAtRaw);
-      const fresh = Number.isFinite(authedAt) && Date.now() - authedAt < TTL_MS;
-
-      // If the flag is stale/missing, clear it so public pages never trigger auth prompts.
-      if (!authed || !fresh) {
-        localStorage.removeItem("adminAuthed");
-        localStorage.removeItem("adminAuthedAt");
-        isAdmin = false;
-      } else {
-        isAdmin = true;
-      }
-    } catch {
-      isAdmin = false;
-    }
-    if (!isAdmin) return;
+    if (!hasFreshAdminAuthFlag()) return;
 
     const btn = document.createElement("button");
     btn.type = "button";
@@ -215,6 +221,9 @@ function initHireSalesPages() {
 
       // Persist current DOM order for this page only
       try {
+        // Optional: confirm the session is still valid only when saving.
+        // This call is gated by the fresh localStorage auth flag and only runs on explicit click.
+        await pingAdminIfAllowed();
         const order = buildPayloadFromDom();
         const res = await fetch("/admin/api/items/reorderPage", {
           method: "POST",

@@ -41,18 +41,23 @@
     <script src="/public/js/main.js"></script>
     <script>
       (function () {
-        fetch("/admin/ping", { cache: "no-store" })
-          .then(function (res) {
-            if (!res || res.status !== 200) return;
-            var a = document.createElement("a");
-            a.href = "/admin";
-            a.className = "btn btn-hero admin-fab";
-            a.textContent = "Admin";
-            document.body.appendChild(a);
-          })
-          .catch(function () {
-            // not authed
-          });
+        // Never call /admin/* on page load (prevents Basic Auth popup for visitors).
+        // Show the Admin button only if this browser has a fresh admin auth flag.
+        try {
+          var TTL_MS = 1000 * 60 * 60 * 12; // 12 hours
+          var authed = localStorage.getItem("adminAuthed") === "1";
+          var authedAt = Number(localStorage.getItem("adminAuthedAt"));
+          var fresh = Number.isFinite(authedAt) && Date.now() - authedAt < TTL_MS;
+          if (!authed || !fresh) return;
+        } catch (e) {
+          return;
+        }
+
+        var a = document.createElement("a");
+        a.href = "/admin";
+        a.className = "btn btn-hero admin-fab";
+        a.textContent = "Admin";
+        document.body.appendChild(a);
       })();
     </script>
   </body>

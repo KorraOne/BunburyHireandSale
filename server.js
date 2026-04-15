@@ -15,20 +15,18 @@ app.set("trust proxy", 1);
 const ROOT_DIR = __dirname;
 const DIST_DIR = path.join(ROOT_DIR, "dist");
 const SRC_DIR = path.join(ROOT_DIR, "src");
-// Source of truth for the live website: the file the public site serves.
-// Keeping this in dist/ allows admin edits to persist across code updates,
-// as long as dist/data/items.json is not tracked by git and deploys preserve it.
-const DATA_FILE = path.join(DIST_DIR, "data", "items.json");
-const FALLBACK_DATA_FILE = path.join(ROOT_DIR, "data", "items.json");
-// Uploaded product images should live inside dist/ so the public site serves only from dist/.
-const PRODUCTS_DIR = path.join(DIST_DIR, "public", "images", "products");
+// Single source of truth (runtime-managed, not tracked by git):
+// - data/items.json
+// - data/products/*
+const DATA_FILE = path.join(ROOT_DIR, "data", "items.json");
+const PRODUCTS_DIR = path.join(ROOT_DIR, "data", "products");
 const PRODUCTS_DIR_RESOLVED = path.resolve(PRODUCTS_DIR) + path.sep;
-const PLACEHOLDER_IMAGE = "/public/images/products/no_product_placeholder.webp";
-const PLACEHOLDER_ABS = path.resolve(DIST_DIR, PLACEHOLDER_IMAGE.replace(/^\/+/, ""));
+const PLACEHOLDER_IMAGE = "/public/images/logos/logo_square_transparent.svg";
+const PLACEHOLDER_ABS = path.resolve(ROOT_DIR, PLACEHOLDER_IMAGE.replace(/^\/+/, ""));
 const PLACEHOLDER_ABS_RESOLVED = path.resolve(PLACEHOLDER_ABS);
 const ALLOWED_IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif"]);
 
-// Ensure upload destination exists (inside dist/)
+// Ensure upload destination exists (root data/)
 try {
   fs.mkdirSync(PRODUCTS_DIR, { recursive: true });
 } catch {
@@ -37,8 +35,7 @@ try {
 
 function readItems() {
   try {
-    const fileToRead = fs.existsSync(DATA_FILE) ? DATA_FILE : FALLBACK_DATA_FILE;
-    const raw = fs.readFileSync(fileToRead, "utf8");
+    const raw = fs.readFileSync(DATA_FILE, "utf8");
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
@@ -189,8 +186,10 @@ function parseImageFocus(body) {
 
 function resolveProductFileFromImagePath(imagePath) {
   if (typeof imagePath !== "string") return null;
-  const rel = imagePath.replace(/^\/+/, "");
-  const abs = path.resolve(DIST_DIR, rel);
+  const prefix = "/public/images/products/";
+  if (!imagePath.startsWith(prefix)) return null;
+  const filename = path.basename(imagePath);
+  const abs = path.resolve(PRODUCTS_DIR, filename);
   if (!abs.startsWith(PRODUCTS_DIR_RESOLVED)) return null;
   return abs;
 }
@@ -198,7 +197,7 @@ function resolveProductFileFromImagePath(imagePath) {
 function isPlaceholderPath(imagePath) {
   if (typeof imagePath !== "string") return false;
   const rel = imagePath.replace(/^\/+/, "");
-  const abs = path.resolve(DIST_DIR, rel);
+  const abs = path.resolve(ROOT_DIR, rel);
   return path.resolve(abs) === PLACEHOLDER_ABS_RESOLVED;
 }
 
@@ -265,15 +264,16 @@ app.get("/admin/ping", adminAuth, (_req, res) => {
 app.use("/admin", express.static(path.join(SRC_DIR, "admin"), { index: "index.html" }));
 
 // Static files (public site)
-app.use("/public", express.static(path.join(DIST_DIR, "public")));
+// Serve product images from data/ (runtime) under a stable public URL.
+app.use("/public/images/products", express.static(PRODUCTS_DIR));
+app.use("/public", express.static(path.join(ROOT_DIR, "public")));
 
 // Public data endpoint: serve live dist file, fallback to repo seed.
 app.get("/data/items.json", (_req, res) => {
-  const fileToSend = fs.existsSync(DATA_FILE) ? DATA_FILE : FALLBACK_DATA_FILE;
-  res.sendFile(fileToSend);
+  res.sendFile(DATA_FILE);
 });
 
-app.use("/data", express.static(path.join(DIST_DIR, "data")));
+app.use("/data", express.static(path.join(ROOT_DIR, "data")));
 
 // Friendly page routes (so /contact maps to contact.html)
 app.get("/contact", (_req, res) => {

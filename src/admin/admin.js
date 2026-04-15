@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ignore
   }
 
-  const PLACEHOLDER_IMAGE = "/public/images/products/no_product_placeholder.webp";
+  const PLACEHOLDER_IMAGE = "/public/images/logos/logo_square_transparent.svg";
 
   function withPlaceholder(imagePath) {
     if (typeof imagePath !== "string" || imagePath.trim().length === 0) return PLACEHOLDER_IMAGE;

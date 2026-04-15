@@ -70,7 +70,7 @@ function initMobileDrawer() {
 }
 
 function initHireSalesPages() {
-  const PLACEHOLDER_IMAGE = "/public/images/products/no_product_placeholder.webp";
+  const PLACEHOLDER_IMAGE = "/public/images/logos/logo_square_transparent.svg";
   const MISSING_DESC_MESSAGE = "No description or details have been added yet.";
 
   const isHirePage = Boolean(document.querySelector("[data-hire-grid]"));

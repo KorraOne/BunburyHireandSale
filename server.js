@@ -186,8 +186,8 @@ function parseImageFocus(body) {
 
 function resolveProductFileFromImagePath(imagePath) {
   if (typeof imagePath !== "string") return null;
-  const prefix = "/public/images/products/";
-  if (!imagePath.startsWith(prefix)) return null;
+  const dataPrefix = "/data/products/";
+  if (!imagePath.startsWith(dataPrefix)) return null;
   const filename = path.basename(imagePath);
   const abs = path.resolve(PRODUCTS_DIR, filename);
   if (!abs.startsWith(PRODUCTS_DIR_RESOLVED)) return null;
@@ -219,7 +219,7 @@ function resolveValidImagePath(imagePath) {
 
   // Return normalized public path
   const filename = path.basename(abs);
-  return `/public/images/products/${filename}`;
+  return `/data/products/${filename}`;
 }
 
 function safeDeleteImageByPath(imagePath) {
@@ -264,9 +264,11 @@ app.get("/admin/ping", adminAuth, (_req, res) => {
 app.use("/admin", express.static(path.join(SRC_DIR, "admin"), { index: "index.html" }));
 
 // Static files (public site)
-// Serve product images from data/ (runtime) under a stable public URL.
-app.use("/public/images/products", express.static(PRODUCTS_DIR));
 app.use("/public", express.static(path.join(ROOT_DIR, "public")));
+
+// Serve product images from data/ (runtime).
+// New canonical URL: /data/products/<filename>
+app.use("/data/products", express.static(PRODUCTS_DIR));
 
 // Public data endpoint: serve live dist file, fallback to repo seed.
 app.get("/data/items.json", (_req, res) => {
@@ -372,7 +374,7 @@ app.post(
       const from = path.join(PRODUCTS_DIR, req.file.filename);
       const to = path.join(PRODUCTS_DIR, finalFilename);
       fs.renameSync(from, to);
-      imagePath = `/public/images/products/${finalFilename}`;
+      imagePath = `/data/products/${finalFilename}`;
     }
 
     const items = normalizeItems(readItems());
@@ -421,7 +423,7 @@ app.put("/admin/api/items/:id", upload.single("image"), (req, res) => {
   let newImagePath = resolveValidImagePath(existing.image);
   if (req.file) {
     const newFilename = req.file.filename;
-    newImagePath = resolveValidImagePath(`/public/images/products/${newFilename}`);
+    newImagePath = resolveValidImagePath(`/data/products/${newFilename}`);
 
     if (resolveValidImagePath(existing.image) !== newImagePath) {
       safeDeleteImageByPath(existing.image);

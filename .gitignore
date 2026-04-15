@@ -28,6 +28,9 @@ Desktop.ini
 build/
 .cache/
 
+# dist/data is runtime/admin-managed content; never track it.
+dist/data/
+
 # --- Local-only data / backups ---
 data/*.bak
 data/*.tmp

@@ -15,7 +15,11 @@ app.set("trust proxy", 1);
 const ROOT_DIR = __dirname;
 const DIST_DIR = path.join(ROOT_DIR, "dist");
 const SRC_DIR = path.join(ROOT_DIR, "src");
-const DATA_FILE = path.join(ROOT_DIR, "data", "items.json");
+// Source of truth for the live website: the file the public site serves.
+// Keeping this in dist/ allows admin edits to persist across code updates,
+// as long as dist/data/items.json is not tracked by git and deploys preserve it.
+const DATA_FILE = path.join(DIST_DIR, "data", "items.json");
+const FALLBACK_DATA_FILE = path.join(ROOT_DIR, "data", "items.json");
 const PRODUCTS_DIR = path.join(ROOT_DIR, "public", "images", "products");
 const PRODUCTS_DIR_RESOLVED = path.resolve(PRODUCTS_DIR) + path.sep;
 const PLACEHOLDER_IMAGE = "/public/images/products/no_product_placeholder.webp";
@@ -25,7 +29,8 @@ const ALLOWED_IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp", ".svg", ".
 
 function readItems() {
   try {
-    const raw = fs.readFileSync(DATA_FILE, "utf8");
+    const fileToRead = fs.existsSync(DATA_FILE) ? DATA_FILE : FALLBACK_DATA_FILE;
+    const raw = fs.readFileSync(fileToRead, "utf8");
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
@@ -34,6 +39,11 @@ function readItems() {
 }
 
 function writeItems(items) {
+  try {
+    fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
+  } catch {
+    // ignore
+  }
   fs.writeFileSync(DATA_FILE, JSON.stringify(items, null, 2) + "\n", "utf8");
 }
 
@@ -248,6 +258,13 @@ app.use("/admin", express.static(path.join(SRC_DIR, "admin"), { index: "index.ht
 
 // Static files (public site)
 app.use("/public", express.static(path.join(DIST_DIR, "public")));
+
+// Public data endpoint: serve live dist file, fallback to repo seed.
+app.get("/data/items.json", (_req, res) => {
+  const fileToSend = fs.existsSync(DATA_FILE) ? DATA_FILE : FALLBACK_DATA_FILE;
+  res.sendFile(fileToSend);
+});
+
 app.use("/data", express.static(path.join(DIST_DIR, "data")));
 
 // Friendly page routes (so /contact maps to contact.html)

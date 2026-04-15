@@ -38,3 +38,6 @@ data/contact_submissions.json
 
 # --- Optional local folders (keep repo clean) ---
 coverage/
+
+data/items.json
+public/images/products/

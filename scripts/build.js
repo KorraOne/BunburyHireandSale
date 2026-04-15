@@ -25,11 +25,23 @@ const copyDir = (from, to) => {
   }
 };
 
-const clearDir = (dir) => {
-  try {
-    fs.rmSync(dir, { recursive: true, force: true });
-  } catch {
-    // ignore
+const clearDistPreservingRuntime = () => {
+  // dist/data and dist/public/images/products are runtime-managed and must persist across builds.
+  const preserve = new Set([
+    path.join(DIST, "data"),
+    path.join(DIST, "public", "images", "products"),
+  ]);
+
+  if (!exists(DIST)) return;
+
+  for (const entry of fs.readdirSync(DIST, { withFileTypes: true })) {
+    const abs = path.join(DIST, entry.name);
+    if (preserve.has(abs)) continue;
+    try {
+      fs.rmSync(abs, { recursive: true, force: true });
+    } catch {
+      // ignore
+    }
   }
 };
 
@@ -113,7 +125,7 @@ const PAGES = [
 ];
 
 function main() {
-  clearDir(DIST);
+  clearDistPreservingRuntime();
   ensureDir(DIST);
 
   const base = read(path.join(SRC, "base.html"));

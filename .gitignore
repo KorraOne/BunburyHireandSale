@@ -31,6 +31,12 @@ build/
 # dist/data is runtime/admin-managed content; never track it.
 dist/data/
 
+# Uploaded product images live in dist/ at runtime; never track them.
+dist/public/images/products/
+
+# Uploads no longer go to repo root public/; keep it clean.
+public/images/products/
+
 # --- Local-only data / backups ---
 data/*.bak
 data/*.tmp

@@ -25,6 +25,14 @@ const copyDir = (from, to) => {
   }
 };
 
+const clearDir = (dir) => {
+  try {
+    fs.rmSync(dir, { recursive: true, force: true });
+  } catch {
+    // ignore
+  }
+};
+
 const replaceAll = (input, map) => {
   let out = input;
   for (const [key, value] of Object.entries(map)) {
@@ -105,6 +113,7 @@ const PAGES = [
 ];
 
 function main() {
+  clearDir(DIST);
   ensureDir(DIST);
 
   const base = read(path.join(SRC, "base.html"));
@@ -117,9 +126,7 @@ function main() {
   // Prefer src-owned assets if present (cleaner single source of truth).
   // Fallback to root folders for backwards compatibility.
   const publicSrc = exists(path.join(SRC, "public")) ? path.join(SRC, "public") : path.join(ROOT, "public");
-  const dataSrc = exists(path.join(SRC, "data")) ? path.join(SRC, "data") : path.join(ROOT, "data");
   copyDir(publicSrc, path.join(DIST, "public"));
-  copyDir(dataSrc, path.join(DIST, "data"));
 
   // JS bundle (public)
   ensureDir(path.join(DIST, "public", "js"));

@@ -28,14 +28,8 @@ Desktop.ini
 build/
 .cache/
 
-# dist/data is runtime/admin-managed content; never track it.
-dist/data/
-
-# Uploaded product images live in dist/ at runtime; never track them.
-dist/public/images/products/
-
-# Uploads no longer go to repo root public/; keep it clean.
-public/images/products/
+# Runtime data is managed in root data/ (do not track).
+data/
 
 # --- Local-only data / backups ---
 data/*.bak

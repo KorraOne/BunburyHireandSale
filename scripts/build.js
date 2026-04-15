@@ -4,6 +4,7 @@ const path = require("path");
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
 const DIST = path.join(ROOT, "dist");
+const PUBLIC = path.join(ROOT, "public");
 
 const read = (p) => fs.readFileSync(p, "utf8");
 const ensureDir = (p) => fs.mkdirSync(p, { recursive: true });
@@ -25,23 +26,11 @@ const copyDir = (from, to) => {
   }
 };
 
-const clearDistPreservingRuntime = () => {
-  // dist/data and dist/public/images/products are runtime-managed and must persist across builds.
-  const preserve = new Set([
-    path.join(DIST, "data"),
-    path.join(DIST, "public", "images", "products"),
-  ]);
-
-  if (!exists(DIST)) return;
-
-  for (const entry of fs.readdirSync(DIST, { withFileTypes: true })) {
-    const abs = path.join(DIST, entry.name);
-    if (preserve.has(abs)) continue;
-    try {
-      fs.rmSync(abs, { recursive: true, force: true });
-    } catch {
-      // ignore
-    }
+const clearDir = (dir) => {
+  try {
+    fs.rmSync(dir, { recursive: true, force: true });
+  } catch {
+    // ignore
   }
 };
 
@@ -125,7 +114,7 @@ const PAGES = [
 ];
 
 function main() {
-  clearDistPreservingRuntime();
+  clearDir(DIST);
   ensureDir(DIST);
 
   const base = read(path.join(SRC, "base.html"));
@@ -134,15 +123,9 @@ function main() {
   const footer = read(path.join(SRC, "partials", "footer.html"));
   const adminPublic = read(path.join(SRC, "partials", "admin-public.js"));
 
-  // Assets
-  // Prefer src-owned assets if present (cleaner single source of truth).
-  // Fallback to root folders for backwards compatibility.
-  const publicSrc = exists(path.join(SRC, "public")) ? path.join(SRC, "public") : path.join(ROOT, "public");
-  copyDir(publicSrc, path.join(DIST, "public"));
-
-  // JS bundle (public)
-  ensureDir(path.join(DIST, "public", "js"));
-  fs.writeFileSync(path.join(DIST, "public", "js", "main.js"), buildJsBundle(), "utf8");
+  // Public JS bundle is served from ROOT/public (single source of truth).
+  ensureDir(path.join(PUBLIC, "js"));
+  fs.writeFileSync(path.join(PUBLIC, "js", "main.js"), buildJsBundle(), "utf8");
 
   for (const page of PAGES) {
     const content = read(path.join(SRC, "pages", page.contentFile));

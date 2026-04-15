@@ -20,12 +20,20 @@ const SRC_DIR = path.join(ROOT_DIR, "src");
 // as long as dist/data/items.json is not tracked by git and deploys preserve it.
 const DATA_FILE = path.join(DIST_DIR, "data", "items.json");
 const FALLBACK_DATA_FILE = path.join(ROOT_DIR, "data", "items.json");
-const PRODUCTS_DIR = path.join(ROOT_DIR, "public", "images", "products");
+// Uploaded product images should live inside dist/ so the public site serves only from dist/.
+const PRODUCTS_DIR = path.join(DIST_DIR, "public", "images", "products");
 const PRODUCTS_DIR_RESOLVED = path.resolve(PRODUCTS_DIR) + path.sep;
 const PLACEHOLDER_IMAGE = "/public/images/products/no_product_placeholder.webp";
-const PLACEHOLDER_ABS = path.resolve(ROOT_DIR, PLACEHOLDER_IMAGE.replace(/^\/+/, ""));
+const PLACEHOLDER_ABS = path.resolve(DIST_DIR, PLACEHOLDER_IMAGE.replace(/^\/+/, ""));
 const PLACEHOLDER_ABS_RESOLVED = path.resolve(PLACEHOLDER_ABS);
 const ALLOWED_IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif"]);
+
+// Ensure upload destination exists (inside dist/)
+try {
+  fs.mkdirSync(PRODUCTS_DIR, { recursive: true });
+} catch {
+  // ignore
+}
 
 function readItems() {
   try {
@@ -182,7 +190,7 @@ function parseImageFocus(body) {
 function resolveProductFileFromImagePath(imagePath) {
   if (typeof imagePath !== "string") return null;
   const rel = imagePath.replace(/^\/+/, "");
-  const abs = path.resolve(ROOT_DIR, rel);
+  const abs = path.resolve(DIST_DIR, rel);
   if (!abs.startsWith(PRODUCTS_DIR_RESOLVED)) return null;
   return abs;
 }
@@ -190,7 +198,7 @@ function resolveProductFileFromImagePath(imagePath) {
 function isPlaceholderPath(imagePath) {
   if (typeof imagePath !== "string") return false;
   const rel = imagePath.replace(/^\/+/, "");
-  const abs = path.resolve(ROOT_DIR, rel);
+  const abs = path.resolve(DIST_DIR, rel);
   return path.resolve(abs) === PLACEHOLDER_ABS_RESOLVED;
 }
 

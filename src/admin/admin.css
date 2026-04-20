@@ -5,6 +5,7 @@
   --neutral-grey: #444444;
   --light-grey: #f5f5f5;
   --white: #ffffff;
+  --ratio-product: 4 / 3;
 }
 
 *,
@@ -98,13 +99,20 @@ img {
   letter-spacing: 0.02em;
 }
 
-.thumb {
+.thumb-container {
   width: 56px;
-  height: 56px;
+  max-width: 56px;
+  flex-shrink: 0;
+}
+
+.thumb-container.product-image-container {
   border-radius: 6px;
-  object-fit: cover;
   border: 1px solid #ddd;
   background: var(--light-grey);
+}
+
+.thumb-container .product-image {
+  border-radius: inherit;
 }
 
 .tags {
@@ -305,39 +313,76 @@ img {
   justify-content: flex-start;
 }
 
-.preview-img {
-  width: 120px;
-  height: 120px;
+.preview-image-container {
+  width: 100%;
+  max-width: 280px;
   border-radius: 6px;
-  object-fit: cover;
   border: 1px solid #ddd;
   background: var(--light-grey);
 }
 
 .crop-frame {
-  width: 100%;
   max-width: 420px;
-  height: 200px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  overflow: hidden;
-  background: var(--light-grey);
   cursor: grab;
   touch-action: none;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: var(--light-grey);
 }
 
 .crop-frame:active {
   cursor: grabbing;
 }
 
-.crop-img {
+.product-image-container {
+  --image-focus: 50% 50%;
+  aspect-ratio: var(--ratio-product);
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.product-image {
   width: 100%;
   height: 100%;
+  max-width: none;
   object-fit: cover;
-  object-position: 50% 50%;
+  object-position: var(--image-focus);
+}
+
+.crop-frame .product-image {
   display: block;
   user-select: none;
   -webkit-user-drag: none;
+}
+
+/* Mirrors public site .hire-card-back-desc (formatting + scroll) */
+.admin-card-back-preview {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 280px;
+  overflow: hidden;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: var(--light-blue-tint);
+}
+
+.admin-card-back-preview .hire-card-back-desc {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  font-weight: 500;
+  color: var(--neutral-grey);
+  white-space: pre-line;
+}
+
+.admin-card-back-preview .hire-card-back-desc.is-empty {
+  opacity: 0.8;
+  font-style: italic;
 }
 
 .form-actions {

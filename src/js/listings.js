@@ -142,21 +142,35 @@ function initHireSalesPages() {
       const front = document.createElement("div");
       front.className = "hire-card-face hire-card-front";
 
+      const imageWrap = document.createElement("div");
+      imageWrap.className = "product-image-container";
+      const fx = Number(item?.imageFocus?.x);
+      const fy = Number(item?.imageFocus?.y);
+      const px = Number.isFinite(fx) ? fx : 50;
+      const py = Number.isFinite(fy) ? fy : 50;
+      imageWrap.style.setProperty("--image-focus", `${px}% ${py}%`);
+
       const img = document.createElement("img");
+      img.className = "product-image";
       img.src = imageOrPlaceholder(item.image);
       img.alt = typeof item.alt === "string" && item.alt.trim().length > 0 ? item.alt : item.name;
       img.loading = "lazy";
-      if (item && item.imageFocus && typeof item.imageFocus === "object") {
-        const x = Number(item.imageFocus.x);
-        const y = Number(item.imageFocus.y);
-        if (Number.isFinite(x) && Number.isFinite(y)) img.style.objectPosition = `${x}% ${y}%`;
-      }
+      imageWrap.appendChild(img);
+
+      const overlay = document.createElement("div");
+      overlay.className = "hire-card-front-overlay";
+      overlay.setAttribute("aria-hidden", "true");
+      const overlayText = document.createElement("span");
+      overlayText.className = "hire-card-front-overlay-text";
+      overlayText.textContent = "Tap to view details";
+      overlay.appendChild(overlayText);
+      imageWrap.appendChild(overlay);
 
       const title = document.createElement("div");
       title.className = "hire-card-title";
       title.textContent = item.name;
 
-      front.appendChild(img);
+      front.appendChild(imageWrap);
       front.appendChild(title);
 
       const back = document.createElement("div");

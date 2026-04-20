@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const PLACEHOLDER_IMAGE = "/public/images/logos/logo_square_transparent.svg";
+  const MISSING_DESC_PREVIEW = "No description or details have been added yet.";
 
   function withPlaceholder(imagePath) {
     if (typeof imagePath !== "string" || imagePath.trim().length === 0) return PLACEHOLDER_IMAGE;
@@ -33,12 +34,14 @@ document.addEventListener("DOMContentLoaded", () => {
     itemId: document.getElementById("itemId"),
     name: document.getElementById("nameInput"),
     desc: document.getElementById("descInput"),
+    descPreview: document.getElementById("descPreview"),
     alt: document.getElementById("altInput"),
     tagHire: document.getElementById("tagHire"),
     tagSale: document.getElementById("tagSale"),
     image: document.getElementById("imageInput"),
     imageHelp: document.getElementById("imageHelp"),
     previewRow: document.getElementById("previewRow"),
+    previewImageWrap: document.getElementById("previewImageWrap"),
     previewImg: document.getElementById("imagePreview"),
     saveBtn: document.getElementById("saveBtn"),
     cropX: document.getElementById("cropX"),
@@ -61,6 +64,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let previewObjectUrl = null;
   let cropObjectUrl = null;
   let cropState = { x: 50, y: 50 };
+
+  function syncDescPreview() {
+    if (!els.descPreview || !els.desc) return;
+    const raw = els.desc.value;
+    const hasContent = typeof raw === "string" && raw.trim().length > 0;
+    els.descPreview.textContent = hasContent ? raw : MISSING_DESC_PREVIEW;
+    els.descPreview.classList.toggle("is-empty", !hasContent);
+  }
 
   function clearPreview() {
     if (previewObjectUrl) {
@@ -88,7 +99,9 @@ document.addEventListener("DOMContentLoaded", () => {
     cropState = { x: clamp(Number(x) || 50, 0, 100), y: clamp(Number(y) || 50, 0, 100) };
     if (els.cropX) els.cropX.value = String(cropState.x);
     if (els.cropY) els.cropY.value = String(cropState.y);
-    if (els.cropImg) els.cropImg.style.objectPosition = `${cropState.x}% ${cropState.y}%`;
+    const focus = `${cropState.x}% ${cropState.y}%`;
+    if (els.cropFrame) els.cropFrame.style.setProperty("--image-focus", focus);
+    if (els.previewImageWrap) els.previewImageWrap.style.setProperty("--image-focus", focus);
   }
 
   function setModalOpen(modal, backdrop, isOpen) {
@@ -103,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clearPreview();
     clearCropPreview();
     setCrop(50, 50);
+    syncDescPreview();
   }
 
   function openCreateForm() {
@@ -114,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clearCropPreview();
     setCrop(50, 50);
     setModalOpen(els.formModal, els.formBackdrop, true);
+    syncDescPreview();
     els.name.focus();
   }
 
@@ -140,10 +155,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (els.cropImg && els.cropField) {
       els.cropImg.src = withPlaceholder(item.image);
       els.cropField.hidden = false;
-      els.cropImg.style.objectPosition = `${cropState.x}% ${cropState.y}%`;
     }
 
     setModalOpen(els.formModal, els.formBackdrop, true);
+    syncDescPreview();
     els.name.focus();
   }
 
@@ -181,13 +196,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const tr = document.createElement("tr");
 
       const tdThumb = document.createElement("td");
+      const thumbWrap = document.createElement("div");
+      thumbWrap.className = "product-image-container thumb-container";
+      const fx = Number(item?.imageFocus?.x);
+      const fy = Number(item?.imageFocus?.y);
+      const px = Number.isFinite(fx) ? fx : 50;
+      const py = Number.isFinite(fy) ? fy : 50;
+      thumbWrap.style.setProperty("--image-focus", `${px}% ${py}%`);
       const img = document.createElement("img");
-      img.className = "thumb";
+      img.className = "product-image";
       img.alt = item.name || "Item image";
       img.src = withPlaceholder(item.image);
       img.loading = "lazy";
+      thumbWrap.appendChild(img);
       tdThumb.setAttribute("data-label", "Thumbnail");
-      tdThumb.appendChild(img);
+      tdThumb.appendChild(thumbWrap);
 
       const tdName = document.createElement("td");
       tdName.setAttribute("data-label", "Name");
@@ -285,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   els.createBtn.addEventListener("click", openCreateForm);
+  if (els.desc) els.desc.addEventListener("input", syncDescPreview);
   els.cancelBtn.addEventListener("click", closeForm);
   els.formBackdrop.addEventListener("click", closeForm);
 
@@ -315,7 +339,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (els.cropImg && els.cropField) {
       els.cropImg.src = cropObjectUrl;
       els.cropField.hidden = false;
-      els.cropImg.style.objectPosition = `${cropState.x}% ${cropState.y}%`;
     }
   });
 

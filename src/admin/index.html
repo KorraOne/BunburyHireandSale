@@ -62,6 +62,14 @@
             <textarea class="textarea" name="description" id="descInput" rows="4"></textarea>
           </label>
 
+          <div class="field">
+            <span class="label">Card back preview</span>
+            <span class="help">Same formatting as the public hire/sale card (newlines and scroll).</span>
+            <div class="admin-card-back-preview">
+              <div class="hire-card-back-desc" id="descPreview"></div>
+            </div>
+          </div>
+
           <label class="field">
             <span class="label">Alt text (optional)</span>
             <input class="input" type="text" name="alt" id="altInput" />
@@ -88,14 +96,20 @@
           </label>
 
           <div class="preview-row" id="previewRow" hidden>
-            <img class="preview-img" id="imagePreview" alt="Selected image preview" />
+            <div class="product-image-container preview-image-container" id="previewImageWrap">
+              <img class="product-image" id="imagePreview" alt="Selected image preview" />
+            </div>
           </div>
 
           <div class="field" id="cropField" hidden>
             <span class="label">Crop preview</span>
             <div class="help">Drag the image to choose the focus area used for card cropping.</div>
-            <div class="crop-frame" id="cropFrame" aria-label="Image crop preview">
-              <img class="crop-img" id="cropImg" alt="Crop preview" />
+            <div
+              class="product-image-container crop-frame"
+              id="cropFrame"
+              aria-label="Image crop preview"
+            >
+              <img class="product-image" id="cropImg" alt="Crop preview" />
             </div>
           </div>
 

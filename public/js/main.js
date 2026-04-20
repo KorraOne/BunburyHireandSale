@@ -224,9 +224,17 @@ function initHireSalesPages() {
 
       const img = document.createElement("img");
       img.className = "product-image";
-      img.src = imageSrcOrEmpty(item.image);
+      const src = imageSrcOrEmpty(item.image);
+      if (src.length > 0) img.src = src;
       img.alt = typeof item.alt === "string" && item.alt.trim().length > 0 ? item.alt : item.name;
       img.loading = "lazy";
+
+      // If there's no URL at all, treat as missing (show placeholder background).
+      if (src.length === 0) {
+        imageWrap.classList.add("is-image-missing");
+        img.style.opacity = "0";
+      }
+
       // If the image fails to load (missing file / 404), keep the broken URL in `img.src`,
       // but visually fall back to the placeholder background on the container.
       img.addEventListener("error", () => {

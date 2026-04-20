@@ -332,18 +332,10 @@ app.get("/admin/api/messages", (_req, res) => {
 });
 
 app.get("/admin/api/items", (req, res) => {
+  // IMPORTANT: Do not rewrite stored image URLs just by viewing admin.
+  // Missing/broken images are handled at render-time via client-side fallbacks.
   const items = normalizeItems(readItems());
-  let changed = false;
-  const normalized = items.map((it) => {
-    if (!it || typeof it !== "object") return it;
-    const nextImage = resolveValidImagePath(it.image);
-    if (it.image !== nextImage) changed = true;
-    const focus = it.imageFocus && typeof it.imageFocus === "object" ? it.imageFocus : undefined;
-    return { ...it, image: nextImage, ...(focus ? { imageFocus: focus } : {}) };
-  });
-
-  if (changed) writeItems(normalized);
-  res.json(normalized);
+  res.json(items);
 });
 
 app.post(

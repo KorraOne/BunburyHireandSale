@@ -112,6 +112,10 @@ img {
   width: 100%;
   overflow: hidden;
   position: relative;
+  background: var(--light-grey);
+}
+
+.product-image-container.is-image-missing {
   background: var(--light-grey) url("/public/images/logos/logo_square_transparent.svg") center / contain no-repeat;
 }
 

@@ -112,6 +112,7 @@ img {
   width: 100%;
   overflow: hidden;
   position: relative;
+  background: var(--light-grey) url("/public/images/logos/logo_square_transparent.svg") center / contain no-repeat;
 }
 
 .product-image {
@@ -120,6 +121,7 @@ img {
   max-width: none;
   object-fit: cover;
   object-position: var(--image-focus);
+  transition: opacity 0.15s ease;
 }
 
 a {

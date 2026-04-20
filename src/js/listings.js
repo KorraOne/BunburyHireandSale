@@ -7,8 +7,9 @@ function initHireSalesPages() {
   if (!isHirePage && !isSalesPage) return;
 
   const normalizeTags = (tags) => (Array.isArray(tags) ? tags.filter((t) => typeof t === "string") : []);
-  const imageOrPlaceholder = (image) =>
-    typeof image === "string" && image.trim().length > 0 ? image : PLACEHOLDER_IMAGE;
+  // IMPORTANT: Do not rewrite stored item image URLs.
+  // We keep the original/broken src, and show a placeholder via CSS when the request fails.
+  const imageSrcOrEmpty = (image) => (typeof image === "string" ? image.trim() : "");
 
   const getPageOrder = (item, pageKey, fallback) => {
     const n = Number(item?.order?.[pageKey]);
@@ -152,9 +153,19 @@ function initHireSalesPages() {
 
       const img = document.createElement("img");
       img.className = "product-image";
-      img.src = imageOrPlaceholder(item.image);
+      img.src = imageSrcOrEmpty(item.image);
       img.alt = typeof item.alt === "string" && item.alt.trim().length > 0 ? item.alt : item.name;
       img.loading = "lazy";
+      // If the image fails to load (missing file / 404), keep the broken URL in `img.src`,
+      // but visually fall back to the placeholder background on the container.
+      img.addEventListener("error", () => {
+        imageWrap.classList.add("is-image-missing");
+        img.style.opacity = "0";
+      });
+      img.addEventListener("load", () => {
+        imageWrap.classList.remove("is-image-missing");
+        img.style.opacity = "1";
+      });
       imageWrap.appendChild(img);
 
       const overlay = document.createElement("div");

@@ -551,6 +551,14 @@ body:not(.reorder-mode) .hire-card-flip:hover {
   outline-offset: 2px;
 }
 
+.turnstile-field {
+  align-items: flex-start;
+}
+
+.turnstile-field .cf-turnstile {
+  width: 100%;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-start;

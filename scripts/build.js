@@ -109,7 +109,7 @@ const PAGES = [
     description: "Reach out for hire availability, sales enquiries, or general questions.",
     bodyClass: "",
     contentFile: "contact.html",
-    extraHead: "",
+    extraHead: '    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>\n',
   },
 ];
 

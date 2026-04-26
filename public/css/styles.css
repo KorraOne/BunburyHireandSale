@@ -332,6 +332,11 @@ body:not(.reorder-mode) .hire-card-flip:hover {
   transition: opacity 0.2s ease;
 }
 
+/* Never show the front “details” hint when flipped */
+.hire-card-flip.is-flipped .hire-card-front-overlay {
+  opacity: 0;
+}
+
 @media (min-width: 768px) {
   .hire-card-front-overlay {
     inset: 0;
